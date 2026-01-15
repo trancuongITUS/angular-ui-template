@@ -16,8 +16,6 @@ export * from './highlight.directive';
 // Note: Use PrimeNG's pTooltip instead of custom tooltip
 
 // Form and validation directives
-export * from './min-max.directive';
-export * from './number-only.directive';
 export * from './trim.directive';
 
 // Image directives
