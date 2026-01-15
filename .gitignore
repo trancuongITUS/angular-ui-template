@@ -43,3 +43,8 @@ testem.log
 Thumbs.db
 
 angular-ui-template.code-workspace
+nul
+
+# ck
+/plans
+repomix-output.xml
