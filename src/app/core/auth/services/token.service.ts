@@ -1,14 +1,28 @@
 import { Injectable, inject } from '@angular/core';
 import { JwtPayload } from '../models/auth.model';
+import { LoggerService } from '@core/services/logger.service';
 
 /**
  * Service for managing JWT tokens in localStorage.
  * Handles storage, retrieval, and validation of access and refresh tokens.
+ *
+ * ⚠️ SECURITY WARNING: localStorage is vulnerable to XSS attacks.
+ * Tokens stored here can be accessed by any injected script.
+ *
+ * PRODUCTION RECOMMENDATIONS:
+ * - Use httpOnly cookies with SameSite=Strict
+ * - Implement Content Security Policy (CSP) headers
+ * - Consider token encryption before storage
+ * - Implement token rotation strategy
+ *
+ * @see https://owasp.org/www-project-web-security-testing-guide/
+ * @see docs/security-roadmap.md for migration plan
  */
 @Injectable({
     providedIn: 'root'
 })
 export class TokenService {
+    private readonly logger = inject(LoggerService);
     private readonly ACCESS_TOKEN_KEY = 'access_token';
     private readonly REFRESH_TOKEN_KEY = 'refresh_token';
     private readonly TOKEN_EXPIRY_KEY = 'token_expiry';
@@ -111,7 +125,7 @@ export class TokenService {
             const decoded = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
             return JSON.parse(decoded) as JwtPayload;
         } catch (error) {
-            console.error('Error decoding token:', error);
+            this.logger.error('Token decode failed', error);
             return null;
         }
     }

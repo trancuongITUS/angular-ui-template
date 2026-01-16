@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { RippleModule } from 'primeng/ripple';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -8,10 +8,11 @@ import { Product, ProductService } from '@core/services/data/product.service';
 @Component({
     standalone: true,
     selector: 'app-recent-sales-widget',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, TableModule, ButtonModule, RippleModule],
     template: `<div class="card mb-8!">
         <div class="font-semibold text-xl mb-4">Recent Sales</div>
-        <p-table [value]="products" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+        <p-table [value]="products()" [paginator]="true" [rows]="5" responsiveLayout="scroll">
             <ng-template #header>
                 <tr>
                     <th>Image</th>
@@ -37,11 +38,11 @@ import { Product, ProductService } from '@core/services/data/product.service';
     providers: [ProductService]
 })
 export class RecentSalesWidget {
-    products!: Product[];
+    products = signal<Product[]>([]);
 
     constructor(private productService: ProductService) {}
 
     ngOnInit() {
-        this.productService.getProductsSmall().then((data) => (this.products = data));
+        this.productService.getProductsSmall().then((data) => this.products.set(data));
     }
 }

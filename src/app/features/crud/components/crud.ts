@@ -1,4 +1,4 @@
-import { Component, OnInit, signal, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal, ViewChild, inject } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
@@ -19,6 +19,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { Product, ProductService } from '@core/services/data/product.service';
+import { InventoryStatus, INVENTORY_STATUSES } from '@shared/models';
 
 interface Column {
     field: string;
@@ -34,6 +35,7 @@ interface ExportColumn {
 @Component({
     selector: 'app-crud',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         CommonModule,
         TableModule,
@@ -210,30 +212,21 @@ interface ExportColumn {
     `,
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class Crud implements OnInit {
-    productDialog: boolean = false;
-
-    products = signal<Product[]>([]);
-
-    product!: Product;
-
-    selectedProducts!: Product[] | null;
-
-    submitted: boolean = false;
-
-    statuses!: any[];
+export class CrudComponent implements OnInit {
+    private readonly productService = inject(ProductService);
+    private readonly messageService = inject(MessageService);
+    private readonly confirmationService = inject(ConfirmationService);
 
     @ViewChild('dt') dt!: Table;
 
-    exportColumns!: ExportColumn[];
-
-    cols!: Column[];
-
-    constructor(
-        private productService: ProductService,
-        private messageService: MessageService,
-        private confirmationService: ConfirmationService
-    ) {}
+    productDialog = false;
+    products = signal<Product[]>([]);
+    product: Product = {};
+    selectedProducts: Product[] | null = null;
+    submitted = false;
+    statuses: InventoryStatus[] = INVENTORY_STATUSES;
+    exportColumns: ExportColumn[] = [];
+    cols: Column[] = [];
 
     exportCSV() {
         this.dt.exportCSV();
@@ -247,12 +240,6 @@ export class Crud implements OnInit {
         this.productService.getProducts().then((data) => {
             this.products.set(data);
         });
-
-        this.statuses = [
-            { label: 'INSTOCK', value: 'instock' },
-            { label: 'LOWSTOCK', value: 'lowstock' },
-            { label: 'OUTOFSTOCK', value: 'outofstock' }
-        ];
 
         this.cols = [
             { field: 'code', header: 'Code', customExportHeader: 'Product Code' },
@@ -357,31 +344,35 @@ export class Crud implements OnInit {
 
     saveProduct() {
         this.submitted = true;
-        let _products = this.products();
-        if (this.product.name?.trim()) {
-            if (this.product.id) {
-                _products[this.findIndexById(this.product.id)] = this.product;
-                this.products.set([..._products]);
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Product Updated',
-                    life: 3000
-                });
-            } else {
-                this.product.id = this.createId();
-                this.product.image = 'product-placeholder.svg';
-                this.messageService.add({
-                    severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Product Created',
-                    life: 3000
-                });
-                this.products.set([..._products, this.product]);
-            }
 
-            this.productDialog = false;
-            this.product = {};
+        if (!this.product.name?.trim()) {
+            return;
         }
+
+        const _products = this.products();
+
+        if (this.product.id) {
+            _products[this.findIndexById(this.product.id)] = this.product;
+            this.products.set([..._products]);
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'Product Updated',
+                life: 3000
+            });
+        } else {
+            this.product.id = this.createId();
+            this.product.image = 'product-placeholder.svg';
+            this.messageService.add({
+                severity: 'success',
+                summary: 'Successful',
+                detail: 'Product Created',
+                life: 3000
+            });
+            this.products.set([..._products, this.product]);
+        }
+
+        this.productDialog = false;
+        this.product = {};
     }
 }

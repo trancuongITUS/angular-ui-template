@@ -1,4 +1,4 @@
-import { Component, computed, inject, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { StyleClassModule } from 'primeng/styleclass';
 import { AppConfigurator } from './app.configurator';
@@ -7,6 +7,7 @@ import { CommonModule } from '@angular/common';
 
 @Component({
     selector: 'app-floating-configurator',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, ButtonModule, StyleClassModule, AppConfigurator],
     template: `
         <div class="flex gap-4 top-8 right-8" [ngClass]="{ fixed: float() }">

@@ -28,4 +28,4 @@ import { FooterWidget } from './components/footerwidget';
         </div>
     `
 })
-export class Landing {}
+export class LandingComponent {}

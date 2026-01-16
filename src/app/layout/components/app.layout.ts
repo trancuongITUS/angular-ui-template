@@ -1,4 +1,4 @@
-import { Component, Renderer2, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Renderer2, ViewChild, inject, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { filter, Subscription } from 'rxjs';
@@ -11,6 +11,7 @@ import { AppStore } from '../../core/store/app.store';
 @Component({
     selector: 'app-layout',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [CommonModule, AppTopbar, AppSidebar, RouterModule, AppFooter],
     template: `<div class="layout-wrapper" [ngClass]="containerClass">
         <app-topbar></app-topbar>
@@ -24,22 +25,19 @@ import { AppStore } from '../../core/store/app.store';
         <div class="layout-mask animate-fadein"></div>
     </div> `
 })
-export class AppLayout {
-    overlayMenuOpenSubscription: Subscription;
-
-    menuOutsideClickListener: any;
-
-    @ViewChild(AppSidebar) appSidebar!: AppSidebar;
-
-    @ViewChild(AppTopbar) appTopBar!: AppTopbar;
-
+export class AppLayout implements OnDestroy {
+    readonly layoutService = inject(LayoutService);
+    readonly renderer = inject(Renderer2);
+    readonly router = inject(Router);
     readonly appStore = inject(AppStore);
 
-    constructor(
-        public layoutService: LayoutService,
-        public renderer: Renderer2,
-        public router: Router
-    ) {
+    @ViewChild(AppSidebar) appSidebar!: AppSidebar;
+    @ViewChild(AppTopbar) appTopBar!: AppTopbar;
+
+    private overlayMenuOpenSubscription: Subscription;
+    private menuOutsideClickListener: (() => void) | null = null;
+
+    constructor() {
         this.overlayMenuOpenSubscription = this.layoutService.overlayOpen$.subscribe(() => {
             if (!this.menuOutsideClickListener) {
                 this.menuOutsideClickListener = this.renderer.listen('document', 'click', (event) => {

@@ -1,8 +1,8 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, throwError, of, timer } from 'rxjs';
-import { map, tap, catchError, switchMap, shareReplay } from 'rxjs/operators';
+import { Observable, BehaviorSubject, throwError, of, timer, Subject } from 'rxjs';
+import { map, tap, catchError, switchMap, shareReplay, first, filter, take } from 'rxjs/operators';
 import { TokenService } from './token.service';
 import { SessionService } from './session.service';
 import { LoginCredentials, AuthResponse, RefreshTokenRequest, RefreshTokenResponse, PasswordResetRequest, PasswordResetConfirmation, RegistrationData } from '../models/auth.model';
@@ -32,22 +32,22 @@ export class AuthService {
         PASSWORD_RESET_CONFIRM: '/auth/password-reset-confirm'
     };
 
-    // Loading state
-    private readonly loadingSubject = new BehaviorSubject<boolean>(false);
-    readonly loading$ = this.loadingSubject.asObservable();
+    // Loading state - using Signals for Angular 20 best practices
+    private readonly loadingSignal = signal<boolean>(false);
+    readonly loading = this.loadingSignal.asReadonly();
 
-    // Error state
-    private readonly errorSubject = new BehaviorSubject<string | null>(null);
-    readonly error$ = this.errorSubject.asObservable();
+    // Error state - using Signals for Angular 20 best practices
+    private readonly errorSignal = signal<string | null>(null);
+    readonly error = this.errorSignal.asReadonly();
 
     // Authentication state (delegated to SessionService)
     readonly isAuthenticated = this.sessionService.isAuthenticated;
     readonly currentUser = this.sessionService.user;
     readonly userProfile = this.sessionService.userProfile;
 
-    // Token refresh observable to prevent multiple simultaneous refresh requests
+    // Token refresh - using Subject for async coordination (Observable pattern still needed for HTTP)
     private refreshTokenInProgress = false;
-    private refreshTokenSubject = new BehaviorSubject<string | null>(null);
+    private refreshTokenSubject = new Subject<string | null>();
 
     constructor() {
         this.initializeAuth();
@@ -55,13 +55,17 @@ export class AuthService {
 
     /**
      * Initializes authentication by checking for stored tokens and validating session.
+     * Uses first() operator to auto-complete after single emission, preventing memory leaks.
      */
     private initializeAuth(): void {
         if (this.tokenService.isTokenValid() && this.sessionService.hasStoredSession()) {
             // Token and session exist, verify with server
-            this.verifySession().subscribe({
-                error: () => this.handleAuthError()
-            });
+            // first() auto-completes subscription after first emission
+            this.verifySession()
+                .pipe(first())
+                .subscribe({
+                    error: () => this.handleAuthError()
+                });
         } else {
             // Clear invalid session
             this.clearAuthState();
@@ -127,7 +131,10 @@ export class AuthService {
     refreshToken(): Observable<string> {
         // If refresh is already in progress, wait for it to complete
         if (this.refreshTokenInProgress) {
-            return this.refreshTokenSubject.asObservable().pipe(switchMap((token) => (token ? of(token) : throwError(() => new Error('Token refresh failed')))));
+            return this.refreshTokenSubject.asObservable().pipe(
+                filter((token): token is string => token !== null),
+                take(1)
+            );
         }
 
         const refreshToken = this.tokenService.getRefreshToken();
@@ -136,7 +143,6 @@ export class AuthService {
         }
 
         this.refreshTokenInProgress = true;
-        this.refreshTokenSubject.next(null);
 
         const request: RefreshTokenRequest = { refreshToken };
 
@@ -148,6 +154,7 @@ export class AuthService {
             }),
             map((response) => response.accessToken),
             catchError((error) => {
+                this.refreshTokenSubject.next(null);
                 this.handleAuthError();
                 return throwError(() => error);
             }),
@@ -254,24 +261,24 @@ export class AuthService {
     }
 
     /**
-     * Sets loading state.
+     * Sets loading state using signal.
      */
     private setLoading(loading: boolean): void {
-        this.loadingSubject.next(loading);
+        this.loadingSignal.set(loading);
     }
 
     /**
-     * Sets error message.
+     * Sets error message using signal.
      */
     private setError(error: string): void {
-        this.errorSubject.next(error);
+        this.errorSignal.set(error);
     }
 
     /**
-     * Clears error message.
+     * Clears error message using signal.
      */
     private clearError(): void {
-        this.errorSubject.next(null);
+        this.errorSignal.set(null);
     }
 
     /**

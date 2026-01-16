@@ -1,6 +1,5 @@
 import { patchState, signalStore, withMethods, withState, withComputed } from '@ngrx/signals';
-import { computed, inject } from '@angular/core';
-import { LayoutService } from '../../layout/services/layout.service';
+import { computed } from '@angular/core';
 
 export type Theme = 'light' | 'dark';
 
@@ -23,6 +22,10 @@ const initialState: AppState = {
     loading: false
 };
 
+/**
+ * Global application state store using NgRx Signals.
+ * Theme synchronization with LayoutService is handled by ThemeSyncService.
+ */
 export const AppStore = signalStore(
     { providedIn: 'root' },
     withState(initialState),
@@ -30,28 +33,19 @@ export const AppStore = signalStore(
         isDarkTheme: computed(() => theme() === 'dark'),
         isAuthenticated: computed(() => !!user())
     })),
-    withMethods((store) => {
-        const layoutService = inject(LayoutService);
-
-        return {
-            setTheme(theme: Theme) {
-                patchState(store, { theme });
-                // Sync with LayoutService for backward compatibility/UI handling
-                layoutService.layoutConfig.update((config) => ({
-                    ...config,
-                    darkTheme: theme === 'dark'
-                }));
-            },
-            toggleTheme() {
-                const newTheme = store.theme() === 'light' ? 'dark' : 'light';
-                this.setTheme(newTheme);
-            },
-            setUser(user: User | null) {
-                patchState(store, { user });
-            },
-            setLoading(loading: boolean) {
-                patchState(store, { loading });
-            }
-        };
-    })
+    withMethods((store) => ({
+        setTheme(theme: Theme) {
+            patchState(store, { theme });
+        },
+        toggleTheme() {
+            const newTheme = store.theme() === 'light' ? 'dark' : 'light';
+            this.setTheme(newTheme);
+        },
+        setUser(user: User | null) {
+            patchState(store, { user });
+        },
+        setLoading(loading: boolean) {
+            patchState(store, { loading });
+        }
+    }))
 );

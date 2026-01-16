@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { debounceTime, Subscription } from 'rxjs';
 import { LayoutService } from '@layout/services/layout.service';
@@ -6,16 +6,17 @@ import { LayoutService } from '@layout/services/layout.service';
 @Component({
     standalone: true,
     selector: 'app-revenue-stream-widget',
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ChartModule],
     template: `<div class="card mb-8!">
         <div class="font-semibold text-xl mb-4">Revenue Stream</div>
-        <p-chart type="bar" [data]="chartData" [options]="chartOptions" class="h-100" />
+        <p-chart type="bar" [data]="chartData()" [options]="chartOptions()" class="h-100" />
     </div>`
 })
 export class RevenueStreamWidget {
-    chartData: any;
+    chartData = signal<any>(null);
 
-    chartOptions: any;
+    chartOptions = signal<any>(null);
 
     subscription!: Subscription;
 
@@ -35,7 +36,7 @@ export class RevenueStreamWidget {
         const borderColor = documentStyle.getPropertyValue('--surface-border');
         const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
 
-        this.chartData = {
+        this.chartData.set({
             labels: ['Q1', 'Q2', 'Q3', 'Q4'],
             datasets: [
                 {
@@ -67,9 +68,9 @@ export class RevenueStreamWidget {
                     barThickness: 32
                 }
             ]
-        };
+        });
 
-        this.chartOptions = {
+        this.chartOptions.set({
             maintainAspectRatio: false,
             aspectRatio: 0.8,
             plugins: {
@@ -102,7 +103,7 @@ export class RevenueStreamWidget {
                     }
                 }
             }
-        };
+        });
     }
 
     ngOnDestroy() {

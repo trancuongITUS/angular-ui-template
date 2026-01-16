@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
-import { Crud } from './components/crud';
+import { CrudComponent } from './components/crud';
 
 export default [
-    { path: '', component: Crud },
+    { path: '', component: CrudComponent },
     { path: '**', redirectTo: '/notfound' }
 ] as Routes;

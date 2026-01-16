@@ -37,7 +37,13 @@
       "Bash(npm install:*)",
       "Bash(timeout 10 npm run start:dev:*)",
       "Bash(npx jest:*)",
-      "Bash(npm ls:*)"
+      "Bash(npm ls:*)",
+      "Bash(echo:*)",
+      "Bash(printf:*)",
+      "Bash(npx:*)",
+      "Bash(Out-File -FilePath 'src/app/core/services/data/fixtures/customer-mock-data.json' -Encoding utf8 -NoNewline)",
+      "Bash(Write-Host 'Customer mock data extracted')",
+      "Bash(\")"
     ],
     "deny": [
       "Bash(rm ~/)",

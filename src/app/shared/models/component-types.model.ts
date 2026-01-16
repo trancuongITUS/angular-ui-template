@@ -61,3 +61,25 @@ export interface BaseComponentProps {
     ariaDescribedBy?: string;
     testId?: string;
 }
+
+/**
+ * Inventory status values for product management
+ */
+export type InventoryStatusValue = 'INSTOCK' | 'LOWSTOCK' | 'OUTOFSTOCK';
+
+/**
+ * Inventory status interface for product CRUD operations
+ */
+export interface InventoryStatus {
+    label: string;
+    value: InventoryStatusValue;
+}
+
+/**
+ * Pre-defined inventory status options
+ */
+export const INVENTORY_STATUSES: InventoryStatus[] = [
+    { label: 'INSTOCK', value: 'INSTOCK' },
+    { label: 'LOWSTOCK', value: 'LOWSTOCK' },
+    { label: 'OUTOFSTOCK', value: 'OUTOFSTOCK' }
+];

@@ -1,5 +1,6 @@
-import { Injectable, signal, computed } from '@angular/core';
+import { Injectable, signal, computed, inject } from '@angular/core';
 import { User, UserProfile } from '../models/user.model';
+import { LoggerService } from '@core/services/logger.service';
 
 /**
  * Service for managing user session state.
@@ -9,6 +10,7 @@ import { User, UserProfile } from '../models/user.model';
     providedIn: 'root'
 })
 export class SessionService {
+    private readonly logger = inject(LoggerService);
     private readonly USER_SESSION_KEY = 'user_session';
 
     // Signals for reactive state management
@@ -138,7 +140,7 @@ export class SessionService {
         try {
             localStorage.setItem(this.USER_SESSION_KEY, JSON.stringify(user));
         } catch (error) {
-            console.error('Error saving session to storage:', error);
+            this.logger.error('Session save failed', error);
         }
     }
 
@@ -162,7 +164,7 @@ export class SessionService {
                 this.isAuthenticatedSignal.set(true);
             }
         } catch (error) {
-            console.error('Error loading session from storage:', error);
+            this.logger.error('Session load failed', error);
             this.clearSessionFromStorage();
         }
     }
@@ -174,7 +176,7 @@ export class SessionService {
         try {
             localStorage.removeItem(this.USER_SESSION_KEY);
         } catch (error) {
-            console.error('Error clearing session from storage:', error);
+            this.logger.error('Session clear failed', error);
         }
     }
 
