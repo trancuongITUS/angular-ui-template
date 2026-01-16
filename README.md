@@ -1,59 +1,122 @@
-# Sakai19
+# Sakai-ng Angular UI Template
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.5.
+Modern, production-ready Angular UI template built with Angular 20, PrimeNG 20, NgRx Signals, and TailwindCSS 4. Features a comprehensive admin dashboard, component showcase, CRUD operations, and theme customization system.
 
-## Development server
+## Tech Stack
 
-To start a local development server, run:
+- **Angular 20** - Latest Angular framework with standalone components and signals
+- **PrimeNG 20** - Rich UI component library with Aura theme
+- **NgRx Signals** - Signal-based state management
+- **TailwindCSS 4** - Utility-first CSS with PostCSS integration
+- **RxJS 7.8** - Reactive programming patterns
+- **Chart.js 4.4** - Data visualization library
+- **TypeScript 5.8** - Static typing for JavaScript
 
+## Quick Start
+
+### Prerequisites
+- Node.js 18+ and npm 9+
+- Angular CLI 20
+
+### Installation
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+### Development Server
+```bash
+npm start
+# or: ng serve
+```
+Open http://localhost:4200 in your browser. Changes reload automatically.
 
-## Code scaffolding
+### Production Build
+```bash
+npm run build
+# or: ng build --configuration production
+```
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+## Available Scripts
+
+| Command | Purpose |
+|---------|---------|
+| `npm start` | Start dev server (localhost:4200) |
+| `npm run build` | Production build optimized for performance |
+| `npm run build:dev` | Development build |
+| `npm run build:prod` | Optimized production build |
+| `npm run watch` | Watch mode for development |
+| `npm run format` | Format code with Prettier |
+| `npm test` | Run unit tests (Karma) |
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── core/              # Core services, auth, interceptors, state
+│   ├── features/          # Feature modules (dashboard, CRUD, UIKit)
+│   ├── layout/            # App layout components (AppLayout, Topbar, Sidebar)
+│   ├── pages/             # Routed pages (auth, landing, error pages)
+│   ├── shared/            # Shared directives, pipes, models, types
+│   ├── app.config.ts      # Application configuration & providers
+│   ├── app.routes.ts      # Root routing configuration
+│   └── app.component.ts   # Root component
+├── assets/
+│   ├── layout/            # SCSS layout system (14 files)
+│   └── demo/              # Demo data and styles
+├── environments/          # Environment-specific configurations
+└── main.ts               # Application bootstrap
+```
+
+## Key Features
+
+- **Authentication & Authorization** - JWT-based auth with role guards and session management
+- **Responsive Layout** - Mobile-first design with sidebar, topbar, and footer
+- **Theme System** - 3 presets × 16 colors × 8 surfaces = 384+ theme combinations
+- **Admin Dashboard** - 5 widgets showing stats, sales, revenue, and notifications
+- **CRUD Operations** - Full product management with PrimeNG Table
+- **Component Showcase** - 14 PrimeNG component demo pages
+- **Error Handling** - Global error handler with 3-tier error management
+- **HTTP Interceptors** - API, auth, loading, and error interceptors
+- **Dark Mode** - Automatic theme switching support
+- **Data Services** - 6 specialized data services for business logic
+
+## Documentation
+
+See [docs/](./docs/) for comprehensive documentation:
+
+- [Project Overview & PDR](./docs/project-overview-pdr.md) - Goals, features, requirements
+- [Codebase Summary](./docs/codebase-summary.md) - Architecture and structure overview
+- [Code Standards](./docs/code-standards.md) - Code organization and patterns
+- [System Architecture](./docs/system-architecture.md) - Technical architecture details
+- [Design Guidelines](./docs/design-guidelines.md) - Theme system and styling
+- [Project Roadmap](./docs/project-roadmap.md) - Planned features and phases
+- [Deployment Guide](./docs/deployment-guide.md) - Build and deployment instructions
+
+## Code Scaffolding
+
+Generate new components using Angular CLI:
 
 ```bash
 ng generate component component-name
+ng generate service service-name
+ng generate directive directive-name
+ng generate pipe pipe-name
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+See [Angular CLI docs](https://angular.dev/tools/cli) for complete command reference.
+
+## Testing
+
+Run unit tests with Karma:
 
 ```bash
-ng generate --help
+npm test
 ```
 
-## Building
+## Support & Resources
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+- [Angular Documentation](https://angular.dev)
+- [PrimeNG Components](https://primeng.org)
+- [TailwindCSS Utilities](https://tailwindcss.com)
+- [NgRx Signals](https://ngrx.io/guide/signals)
