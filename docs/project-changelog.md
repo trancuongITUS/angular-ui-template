@@ -5,6 +5,68 @@
 
 ---
 
+## [20.1.0] - 2026-01-17 (Phase 2: File Modularization)
+
+### Added
+- **Component Modularization:**
+  - `table-demo/` - Separated table component into modularized structure
+    - `table-demo.component.ts` - Component logic
+    - `table-demo.data.ts` - Mock data and constants
+    - `table-demo.helpers.ts` - Helper functions
+    - `table-demo.component.html` - Template
+    - `index.ts` - Barrel export
+  - `menu-demo/` - Separated menu component into modularized structure
+    - `menu-demo.component.ts` - Component logic
+    - `menu-demo.data.ts` - Mock data
+    - `menu-demo.component.html` - Template
+    - `index.ts` - Barrel export
+
+- **Service Modularization:**
+  - `logger/` - Split logging service into focused modules
+    - `logger.service.ts` - Core logging functionality
+    - `log-formatter.ts` - Log message formatting logic
+    - `index.ts` - Barrel export
+
+- **HTTP Utilities:**
+  - `http-params-builder.ts` - Utility for building HTTP query parameters
+    - Centralized query parameter construction
+    - Type-safe parameter handling
+  - `http-error-handler.ts` - Utility for HTTP error handling
+    - Centralized error transformation
+    - Consistent error response format
+
+- **CRUD Helpers:**
+  - `crud.helpers.ts` - Helper functions for CRUD operations
+    - Common transformation functions
+    - Validation utilities
+    - Data formatting helpers
+
+### Changed
+- Improved code organization by separating concerns
+- Enhanced file structure following modularization patterns
+- Updated imports to use barrel exports
+
+### Benefits
+- **Code Quality:** Better organization and readability
+- **Maintenance:** Easier to locate and update specific logic
+- **Testing:** Smaller, focused test files for each module
+- **Reusability:** Helpers and formatters can be imported independently
+- **Performance:** Better tree-shaking with separated concerns
+
+### Files Modified
+- Updated documentation to reflect modularized structure
+- Added modularization patterns to code standards guide
+
+### Files Created
+- `src/app/features/uikit/components/table-demo/` (4 new files)
+- `src/app/features/uikit/components/menu-demo/` (4 new files)
+- `src/app/core/services/logger/` (3 new files)
+- `src/app/core/http/http-params-builder.ts`
+- `src/app/core/http/http-error-handler.ts`
+- `src/app/features/crud/components/crud.helpers.ts`
+
+---
+
 ## [20.0.1] - 2026-01-17
 
 ### Added

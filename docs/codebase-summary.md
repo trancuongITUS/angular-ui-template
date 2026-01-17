@@ -111,6 +111,8 @@ Configuration Files:
 - **base-http.service.ts** - Generic HTTP methods
 - **http.models.ts** - API response models
 - **api.model.ts** - Standard API envelope
+- **http-params-builder.ts** - Utility for building HTTP query parameters (Phase 2)
+- **http-error-handler.ts** - Utility for centralized HTTP error handling (Phase 2)
 
 ### Interceptors (`core/interceptors/`)
 - **api.interceptor.ts** - Adds base API URL (1st priority)
@@ -129,7 +131,10 @@ Configuration Files:
 - **error.model.ts** - Error type definitions
 
 ### Services (`core/services/`)
-- **logger.service.ts** - Application logging
+- **logger/** - Logging service (modularized in Phase 2)
+  - **logger.service.ts** - Application logging
+  - **log-formatter.ts** - Log message formatting
+  - **index.ts** - Barrel export
 - **notification.service.ts** - User notifications (toast, confirm)
 - **data/**
   - **customer.service.ts** - Customer CRUD (293 KB, large demo dataset)
@@ -149,18 +154,29 @@ Configuration Files:
   - **notifications.component.ts** - Alert panel
 
 ### CRUD (`features/crud/`)
-- **product-list.component.ts** - Product table with filtering
-- **product-form.component.ts** - Add/edit product dialog
+- **components/**
+  - **product-list.component.ts** - Product table with filtering
+  - **product-form.component.ts** - Add/edit product dialog
+  - **crud.helpers.ts** - CRUD helper functions (Phase 2)
 - **product.service.ts** - Product API calls
 
 ### UIKit (`features/uikit/`)
 - **uikit.routes.ts** - UIKit routing
-- **components/** - 14+ demo components
+- **components/** - 14+ demo components (modularized in Phase 2)
   - **buttondemo.ts** - Button components
   - **inputdemo.ts** - Form inputs
-  - **tabledemo.ts** - Data tables
+  - **table-demo/** - Data tables (modularized)
+    - **table-demo.component.ts** - Main component
+    - **table-demo.data.ts** - Demo data
+    - **table-demo.helpers.ts** - Helper functions
+    - **table-demo.component.html** - Template
+    - **index.ts** - Barrel export
   - **treedemo.ts** - Tree views
-  - **menudemo.ts** - Menu components
+  - **menu-demo/** - Menu components (modularized)
+    - **menu-demo.component.ts** - Main component
+    - **menu-demo.data.ts** - Demo data
+    - **menu-demo.component.html** - Template
+    - **index.ts** - Barrel export
   - **dialogdemo.ts** - Modal dialogs
   - **toastdemo.ts** - Toast notifications
   - **chartdemo.ts** - Chart visualizations

@@ -866,13 +866,80 @@ export class ProductListComponent {
 }
 ```
 
+## Modularization Strategy (Phase 2+)
+
+### Component Modularization Example
+
+When components grow beyond 200 lines, split into modular folders with separated concerns:
+
+**Before (Monolithic):**
+```
+table-demo.ts (400+ lines)
+  - Component logic
+  - Data definitions
+  - Helper functions
+  - HTML template
+```
+
+**After (Modularized):**
+```
+table-demo/
+├── table-demo.component.ts      # Component logic only
+├── table-demo.data.ts            # Mock data & constants
+├── table-demo.helpers.ts         # Helper functions
+├── table-demo.component.html     # Template
+└── index.ts                      # Barrel export
+```
+
+### Service Modularization Example
+
+Split services with multiple responsibilities:
+
+**Before:**
+```
+logger.service.ts (250 lines)
+  - Logging core logic
+  - Log formatting
+  - Timestamp handling
+```
+
+**After:**
+```
+logger/
+├── logger.service.ts             # Core service
+├── log-formatter.ts              # Formatting logic
+└── index.ts                      # Barrel export
+```
+
+### HTTP Utilities Modularization
+
+Extract HTTP-related utilities:
+
+```
+core/http/
+├── base-http.service.ts          # Base HTTP client
+├── http-params-builder.ts        # Query parameter building (Phase 2)
+├── http-error-handler.ts         # Error handling utilities (Phase 2)
+├── http.models.ts                # API response models
+├── api.model.ts                  # Standard API envelope
+└── index.ts                      # Barrel export
+```
+
+### Benefits of Modularization
+- **Readability** - Each file has single responsibility
+- **Maintainability** - Easier to locate and update specific logic
+- **Reusability** - Helpers can be imported independently
+- **Testing** - Smaller, focused test files
+- **Performance** - Better tree-shaking with separated concerns
+
 ## Code Quality Rules
 
-1. **Keep components under 200 lines** - Split larger components
+1. **Keep components under 200 lines** - Split larger components into modularized folders
 2. **Single Responsibility Principle** - One purpose per file/class
-3. **DRY** - Avoid code duplication, extract to services
+3. **DRY** - Avoid code duplication, extract to services or helpers
 4. **YAGNI** - Don't add features that aren't needed
 5. **Type Safety** - Use TypeScript strict mode always
 6. **Error Handling** - All API calls should have error handlers
 7. **Comments** - Explain "why", not "what"
 8. **Testing** - Aim for 80%+ coverage on core modules
+9. **Modularization** - Follow Phase 2+ modularization patterns when components exceed 200 lines

@@ -10,10 +10,10 @@ import { MessagesDemo } from './components/messagesdemo';
 import { MiscDemo } from './components/miscdemo';
 import { PanelsDemo } from './components/panelsdemo';
 import { TimelineDemo } from './components/timelinedemo';
-import { TableDemo } from './components/tabledemo';
+import { TableDemo } from './components/table-demo';
 import { OverlayDemo } from './components/overlaydemo';
 import { TreeDemo } from './components/treedemo';
-import { MenuDemo } from './components/menudemo';
+import { MenuDemo } from './components/menu-demo';
 
 export default [
     { path: 'button', data: { breadcrumb: 'Button' }, component: ButtonDemo },

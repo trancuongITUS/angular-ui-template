@@ -1,5 +1,5 @@
 import { Injectable, inject } from '@angular/core';
-import { LoggerService } from '@core/services/logger.service';
+import { LoggerService } from '@core/services';
 import { EnvironmentService } from '@core/services/environment.service';
 import { ErrorInfo, ErrorSeverity, ErrorType, ApplicationError } from './error.model';
 

@@ -1,5 +1,5 @@
 // Core services barrel exports
 export * from './data';
 export * from './environment.service';
-export * from './logger.service';
+export * from './logger';
 export * from './notification.service';
