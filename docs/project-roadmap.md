@@ -1,16 +1,18 @@
 # Project Roadmap
 
-**Version:** 20.0.0
-**Last Updated:** January 15, 2026
+**Version:** 20.0.1
+**Last Updated:** January 17, 2026
 **Status:** Active Development
 
 ## Current Status
 
-**Phase:** 1 - Foundation (COMPLETE)
+**Phase:** 1 - Foundation (COMPLETE with Security Hardening)
 
-The Sakai-ng template has reached production-ready status with all core features implemented:
+The Sakai-ng template has reached production-ready status with all core features implemented and critical security fixes applied:
 - Angular 20 with standalone components & signals
 - Complete authentication system with JWT
+- **Authorization directives with real role/permission checking (v20.0.1)**
+- **Comprehensive test coverage for authorization layer (11 new tests)**
 - Responsive admin layout with theme customization
 - Admin dashboard with 5 widgets
 - CRUD operations for product management
@@ -19,8 +21,10 @@ The Sakai-ng template has reached production-ready status with all core features
 - Global error handling with 3-tier approach
 - State management with NgRx Signals
 - SCSS layout system (14 files)
+- **Fixed memory leaks in layout components**
+- **Fixed theme toggle logic**
 
-**Progress:** 100%
+**Progress:** 100% (Phase 1 Security Hardening Complete)
 
 ## Phase 1: Foundation (Complete)
 
@@ -31,7 +35,7 @@ The Sakai-ng template has reached production-ready status with all core features
 - Implement authentication & authorization
 - Build comprehensive theme system
 
-### Completed Items
+### Completed Items (v20.0.0)
 - [x] Angular 20 project setup with standalone components
 - [x] PrimeNG 20 integration with Aura theme
 - [x] TailwindCSS 4 configuration
@@ -51,6 +55,15 @@ The Sakai-ng template has reached production-ready status with all core features
 - [x] Documentation structure
 - [x] Code standards documentation
 - [x] Architecture documentation
+
+### Security Hardening (v20.0.1)
+- [x] Authorization directives with real role/permission checking
+- [x] Integration with AuthService for live verification
+- [x] Test coverage for authorization layer (11 new tests)
+- [x] Fixed memory leaks in layout components (takeUntil pattern)
+- [x] Fixed theme toggle logic inversion
+- [x] Removed duplicate service providers
+- [x] Enhanced documentation with security warnings
 
 ### Metrics
 - Files: 156 total
@@ -424,6 +437,28 @@ For questions about the roadmap:
 
 ---
 
+## Changelog
+
+### [20.0.1] - 2026-01-17
+
+#### Fixed
+- **CRITICAL**: Authorization directives (has-role, has-permission) now properly check user roles/permissions via AuthService instead of always returning true (security vulnerability)
+- **CRITICAL**: Theme logic inversion in layout.service.ts - darkTheme now returns correct 'dark'/'light' values
+- **HIGH**: Memory leak in app-menuitem.component.ts - added takeUntil pattern for Router event subscription
+- **HIGH**: LayoutService singleton broken by duplicate provider - removed providers array from component decorator
+- Made authorization directives reactive to auth state changes using Angular signals/effect
+
+#### Security
+- Fixed authorization bypass vulnerability in directive system
+- Added frontend validation note: backend must also re-verify roles/permissions
+
+#### Testing
+- Added 11 unit tests for authorization directives (has-role, has-permission)
+- All tests passing (11/11)
+- Build succeeds with no new errors
+
+---
+
 ## Changelog Format
 
 When features are completed, updates will follow this format:
@@ -448,5 +483,5 @@ When features are completed, updates will follow this format:
 - Updated dependencies for security patches
 ```
 
-Last updated: January 15, 2026
+Last updated: January 17, 2026
 Next review: April 15, 2026

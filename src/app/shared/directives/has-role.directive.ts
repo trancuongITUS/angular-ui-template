@@ -1,13 +1,15 @@
-import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef, inject, effect } from '@angular/core';
 import { Subject } from 'rxjs';
+import { AuthService } from '@core/auth/services/auth.service';
 
 /**
- * Structural directive to show/hide elements based on user roles
- * Requires an auth service to be implemented in core/auth
+ * Structural directive to show/hide elements based on user roles.
+ * Reactively updates when user authentication state changes.
+ * NOTE: Client-side only - backend must re-verify for security.
  *
  * @example
- * <button *appHasRole="'admin'">Admin Panel</button>
- * <div *appHasRole="['admin', 'manager']">Management Options</div>
+ * <button *appHasRole="'ADMIN'">Admin Panel</button>
+ * <div *appHasRole="['ADMIN', 'MANAGER']">Management Options</div>
  */
 @Directive({
     selector: '[appHasRole]',
@@ -16,13 +18,21 @@ import { Subject } from 'rxjs';
 export class HasRoleDirective implements OnInit, OnDestroy {
     @Input() appHasRole: string | string[] = [];
 
+    private readonly authService = inject(AuthService);
     private destroy$ = new Subject<void>();
     private hasView = false;
 
     constructor(
         private templateRef: TemplateRef<unknown>,
         private viewContainer: ViewContainerRef
-    ) {}
+    ) {
+        // React to auth state changes (login/logout/role updates)
+        effect(() => {
+            // Track the currentUser signal - triggers re-evaluation on change
+            this.authService.currentUser();
+            this.updateView();
+        });
+    }
 
     ngOnInit(): void {
         this.updateView();
@@ -40,17 +50,19 @@ export class HasRoleDirective implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * Checks if user has required role(s).
+     * Returns true if no roles specified (permissive fallback for undefined requirements).
+     */
     private checkRole(): boolean {
-        // TODO: Inject AuthService from core
-        // For now, return true as a placeholder
-        // In production, implement:
-        // return this.authService.hasRole(this.appHasRole);
+        const roles = Array.isArray(this.appHasRole) ? this.appHasRole : [this.appHasRole];
 
-        // Placeholder logic - replace with actual role check
-        if (Array.isArray(this.appHasRole)) {
-            return this.appHasRole.length > 0;
+        // If no roles specified, allow access (element visible)
+        if (roles.length === 0 || (roles.length === 1 && !roles[0])) {
+            return true;
         }
-        return !!this.appHasRole;
+
+        return this.authService.hasAnyRole(roles);
     }
 
     ngOnDestroy(): void {

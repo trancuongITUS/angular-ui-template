@@ -1,10 +1,11 @@
-import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef } from '@angular/core';
+import { Directive, Input, OnDestroy, OnInit, TemplateRef, ViewContainerRef, inject, effect } from '@angular/core';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { AuthService } from '@core/auth/services/auth.service';
 
 /**
- * Structural directive to show/hide elements based on user permissions
- * Requires a permission service to be implemented in core/auth
+ * Structural directive to show/hide elements based on user permissions.
+ * Reactively updates when user authentication state changes.
+ * NOTE: Client-side only - backend must re-verify for security.
  *
  * @example
  * <button *appHasPermission="'employee.create'">Create Employee</button>
@@ -17,13 +18,21 @@ import { takeUntil } from 'rxjs/operators';
 export class HasPermissionDirective implements OnInit, OnDestroy {
     @Input() appHasPermission: string | string[] = [];
 
+    private readonly authService = inject(AuthService);
     private destroy$ = new Subject<void>();
     private hasView = false;
 
     constructor(
         private templateRef: TemplateRef<unknown>,
         private viewContainer: ViewContainerRef
-    ) {}
+    ) {
+        // React to auth state changes (login/logout/permission updates)
+        effect(() => {
+            // Track the currentUser signal - triggers re-evaluation on change
+            this.authService.currentUser();
+            this.updateView();
+        });
+    }
 
     ngOnInit(): void {
         this.updateView();
@@ -41,17 +50,20 @@ export class HasPermissionDirective implements OnInit, OnDestroy {
         }
     }
 
+    /**
+     * Checks if user has required permission(s).
+     * Returns true if no permissions specified (permissive fallback).
+     */
     private checkPermission(): boolean {
-        // TODO: Inject AuthService or PermissionService from core
-        // For now, return true as a placeholder
-        // In production, implement:
-        // return this.authService.hasPermission(this.appHasPermission);
+        const permissions = Array.isArray(this.appHasPermission) ? this.appHasPermission : [this.appHasPermission];
 
-        // Placeholder logic - replace with actual permission check
-        if (Array.isArray(this.appHasPermission)) {
-            return this.appHasPermission.length > 0;
+        // If no permissions specified, allow access
+        if (permissions.length === 0 || (permissions.length === 1 && !permissions[0])) {
+            return true;
         }
-        return !!this.appHasPermission;
+
+        // Check if user has any of the required permissions
+        return permissions.some((permission) => this.authService.hasPermission(permission));
     }
 
     ngOnDestroy(): void {

@@ -1,7 +1,7 @@
 # Codebase Summary
 
-**Version:** 20.0.0
-**Last Updated:** January 15, 2026
+**Version:** 20.0.1
+**Last Updated:** January 17, 2026
 
 ## Directory Structure Overview
 
@@ -202,15 +202,22 @@ Configuration Files:
 ## Shared Module Breakdown
 
 ### Directives (`shared/directives/`)
-8 custom directives:
+8 custom directives with full test coverage:
 - **app-click-outside.directive.ts** - Detect clicks outside element
 - **app-debounce.directive.ts** - Debounce input events
 - **app-theme.directive.ts** - Apply dynamic themes
-- **app-permissions.directive.ts** - Show/hide based on permissions
+- **has-role.directive.ts** - Show/hide based on user roles (AuthService integrated)
+- **has-permission.directive.ts** - Show/hide based on permissions (AuthService integrated)
 - **app-highlight.directive.ts** - Text highlighting
 - **app-tooltip.directive.ts** - Custom tooltips
 - **app-scroll-to.directive.ts** - Smooth scrolling
 - **app-auto-focus.directive.ts** - Auto-focus inputs
+
+**Authorization Directives (v20.0.1)**
+- Real-time role/permission checking via AuthService
+- Reactive to authentication state changes
+- Client-side only (backend must re-verify)
+- Full test coverage (11 tests)
 
 ### Pipes (`shared/pipes/`)
 13 custom pipes:
