@@ -4,6 +4,7 @@
         #dt1
         [value]="customers1"
         dataKey="id"
+        [rowTrackBy]="trackByCustomerId"
         [rows]="10"
         [loading]="loading"
         [rowHover]="true"
@@ -152,7 +153,7 @@
     <div class="font-semibold text-xl mb-4">Frozen Columns</div>
     <p-togglebutton [(ngModel)]="balanceFrozen" [onIcon]="'pi pi-lock'" offIcon="pi pi-lock-open" [onLabel]="'Balance'" offLabel="Balance" />
 
-    <p-table [value]="customers2" [scrollable]="true" scrollHeight="400px" styleClass="mt-4">
+    <p-table [value]="customers2" [scrollable]="true" scrollHeight="400px" [rowTrackBy]="trackByCustomerId" styleClass="mt-4">
         <ng-template #header>
             <tr>
                 <th style="min-width:200px" pFrozenColumn class="font-bold">Name</th>
@@ -186,7 +187,7 @@
 
 <div class="card">
     <div class="font-semibold text-xl mb-4">Row Expansion</div>
-    <p-table [value]="products" dataKey="id" [tableStyle]="{ 'min-width': '60rem' }" [expandedRowKeys]="expandedRows">
+    <p-table [value]="products" dataKey="id" [rowTrackBy]="trackByProductId" [tableStyle]="{ 'min-width': '60rem' }" [expandedRowKeys]="expandedRows">
         <ng-template #caption>
             <button pButton icon="pi pi-fw {{ isExpanded ? 'pi-minus' : 'pi-plus' }}" label="{{ isExpanded ? 'Collapse All' : 'Expand All' }}" (click)="expandAll()"></button>
             <div class="flex table-header"></div>
@@ -226,7 +227,7 @@
                 <td colspan="7">
                     <div class="p-4">
                         <h5>Orders for {{ product.name }}</h5>
-                        <p-table [value]="product.orders" dataKey="id">
+                        <p-table [value]="product.orders" dataKey="id" [rowTrackBy]="trackByOrderId">
                             <ng-template #header>
                                 <tr>
                                     <th pSortableColumn="id">Id <p-sortIcon field="price" /></th>
@@ -266,7 +267,7 @@
 
 <div class="card">
     <div class="font-semibold text-xl mb-4">Grouping</div>
-    <p-table [value]="customers3" sortField="representative.name" sortMode="single" [scrollable]="true" scrollHeight="400px" rowGroupMode="subheader" groupRowsBy="representative.name" [tableStyle]="{ 'min-width': '60rem' }">
+    <p-table [value]="customers3" sortField="representative.name" sortMode="single" [scrollable]="true" scrollHeight="400px" rowGroupMode="subheader" groupRowsBy="representative.name" [rowTrackBy]="trackByCustomerId" [tableStyle]="{ 'min-width': '60rem' }">
         <ng-template #header>
             <tr>
                 <th>Name</th>

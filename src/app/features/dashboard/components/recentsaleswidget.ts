@@ -12,7 +12,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
     imports: [CommonModule, TableModule, ButtonModule, RippleModule],
     template: `<div class="card mb-8!">
         <div class="font-semibold text-xl mb-4">Recent Sales</div>
-        <p-table [value]="products()" [paginator]="true" [rows]="5" responsiveLayout="scroll">
+        <p-table [value]="products()" [paginator]="true" [rows]="5" [rowTrackBy]="trackByProductId" responsiveLayout="scroll">
             <ng-template #header>
                 <tr>
                     <th>Image</th>
@@ -44,5 +44,10 @@ export class RecentSalesWidget {
 
     ngOnInit() {
         this.productService.getProductsSmall().then((data) => this.products.set(data));
+    }
+
+    /** Track products by id for table performance optimization */
+    trackByProductId(index: number, item: Product): string {
+        return item.id || String(index);
     }
 }

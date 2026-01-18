@@ -20,6 +20,7 @@
     [(selection)]="selectedProducts"
     [rowHover]="true"
     dataKey="id"
+    [rowTrackBy]="trackById"
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
     [showCurrentPageReport]="true"
     [rowsPerPageOptions]="[10, 20, 30]"

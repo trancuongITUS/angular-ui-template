@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { ChangeDetectionStrategy, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { InputTextModule } from 'primeng/inputtext';
 import { MultiSelectModule } from 'primeng/multiselect';
@@ -29,6 +29,7 @@ interface ExpandedRows {
 @Component({
     selector: 'app-table-demo',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [
         TableModule,
         MultiSelectModule,
@@ -175,5 +176,20 @@ export class TableDemo implements OnInit {
         }
 
         return total;
+    }
+
+    /** Track customers by id for table performance optimization */
+    trackByCustomerId(index: number, item: Customer): number {
+        return item.id ?? index;
+    }
+
+    /** Track products by id for table performance optimization */
+    trackByProductId(index: number, item: Product): string {
+        return item.id || String(index);
+    }
+
+    /** Track orders by id for nested table performance optimization */
+    trackByOrderId(index: number, item: { id: string }): string {
+        return item.id || String(index);
     }
 }

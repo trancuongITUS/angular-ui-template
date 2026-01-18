@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -15,6 +15,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
 @Component({
     selector: 'app-overlay-demo',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ToastModule, DialogModule, ButtonModule, DrawerModule, PopoverModule, ConfirmPopupModule, InputTextModule, FormsModule, TooltipModule, TableModule, ToastModule],
     template: ` <div class="flex flex-col md:flex-row gap-8">
         <div class="md:w-1/2">
@@ -37,7 +38,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
                 <div class="flex flex-wrap gap-2">
                     <p-button type="button" label="Show" (click)="toggleDataTable(op2, $event)" />
                     <p-popover #op2 id="overlay_panel" [style]="{ width: '450px' }">
-                        <p-table [value]="products" selectionMode="single" [(selection)]="selectedProduct" dataKey="id" [rows]="5" [paginator]="true" (onRowSelect)="onProductSelect(op2, $event)">
+                        <p-table [value]="products" selectionMode="single" [(selection)]="selectedProduct" dataKey="id" [rowTrackBy]="trackByProductId" [rows]="5" [paginator]="true" (onRowSelect)="onProductSelect(op2, $event)">
                             <ng-template #header>
                                 <tr>
                                     <th>Name</th>
@@ -226,5 +227,10 @@ export class OverlayDemo implements OnInit {
 
     closeConfirmation() {
         this.displayConfirmation = false;
+    }
+
+    /** Track products by id for table performance optimization */
+    trackByProductId(index: number, item: Product): string {
+        return item.id || String(index);
     }
 }

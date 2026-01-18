@@ -153,6 +153,11 @@ export class CrudComponent implements OnInit {
         return getCrudSeverity(status);
     }
 
+    /** Track products by id for table performance optimization */
+    trackById(index: number, item: Product): string {
+        return item.id || String(index);
+    }
+
     saveProduct() {
         this.submitted = true;
 

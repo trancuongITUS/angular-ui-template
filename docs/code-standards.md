@@ -534,7 +534,9 @@ export class ClickOutsideDirective {
 
 ## Pipe Patterns
 
-### Stateless Pure Pipe
+### Pure Pipes (Recommended Default)
+
+**Pure pipes** (default) only re-execute when input reference changes. Use for performance-critical transformations.
 
 ```typescript
 import { Pipe, PipeTransform } from '@angular/core';
@@ -542,7 +544,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'capitalize',
   standalone: true,
-  pure: true
+  pure: true  // Default - only re-runs on input reference change
 })
 export class CapitalizePipe implements PipeTransform {
   transform(value: string): string {
@@ -554,7 +556,18 @@ export class CapitalizePipe implements PipeTransform {
 // Usage: {{ 'hello' | capitalize }} => "Hello"
 ```
 
-### Stateful Pipe with Parameters
+**Important:** For pure pipes to detect array/object changes, ensure immutable updates:
+```typescript
+// Bad - mutates array, pure pipe won't detect change
+this.items.push(newItem);
+
+// Good - creates new reference, pure pipe detects change
+this.items = [...this.items, newItem];
+```
+
+### Impure Pipes (Use Sparingly)
+
+Only use `pure: false` when absolutely necessary (e.g., async operations). Impacts performance.
 
 ```typescript
 import { Pipe, PipeTransform } from '@angular/core';
@@ -562,7 +575,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'truncate',
   standalone: true,
-  pure: false
+  pure: false  // Re-runs on every change detection cycle
 })
 export class TruncatePipe implements PipeTransform {
   transform(value: string, limit: number = 10, ellipsis: string = '...'): string {
@@ -932,6 +945,89 @@ core/http/
 - **Testing** - Smaller, focused test files
 - **Performance** - Better tree-shaking with separated concerns
 
+## Performance Optimization Patterns (Phase 3+)
+
+### TrackBy Function for Lists
+
+Use `trackBy` with `*ngFor` and PrimeNG tables to optimize list rendering. Without trackBy, Angular recreates every DOM element when list changes.
+
+```typescript
+// Component
+export class ProductListComponent {
+  products = signal<Product[]>([]);
+
+  trackByProductId(index: number, item: Product): string {
+    return item.id; // Unique identifier
+  }
+}
+```
+
+```html
+<!-- Template -->
+<div *ngFor="let product of products(); trackBy: trackByProductId">
+  {{ product.name }}
+</div>
+
+<!-- PrimeNG Table -->
+<p-table [value]="products()" [rowTrackBy]="trackByProductId">
+  <p-column field="name" header="Name"></p-column>
+</p-table>
+```
+
+**Benefits:**
+- Reduces DOM node creation from O(n) to O(1) for unchanged items
+- Preserves input focus and scroll position
+- Improves performance on large lists (100+ items)
+
+### ChangeDetectionStrategy.OnPush
+
+Use OnPush strategy for smart/container components to reduce change detection cycles.
+
+```typescript
+import { ChangeDetectionStrategy } from '@angular/core';
+
+@Component({
+  selector: 'app-product-list',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ProductListComponent {
+  @Input() products: Product[] = [];
+  @Output() deleted = new EventEmitter<Product>();
+}
+```
+
+**Benefits:**
+- Only runs change detection when @Input/@Output change
+- Works seamlessly with signals (automatic optimization)
+- Reduces CPU usage on large applications
+
+### Pure Pipes (Default)
+
+Mark pipes as `pure: true` to skip re-execution when inputs don't change.
+
+```typescript
+@Pipe({
+  name: 'orderBy',
+  pure: true  // Essential for performance
+})
+export class OrderByPipe implements PipeTransform {
+  transform<T>(items: T[], field: keyof T): T[] {
+    return [...items].sort((a, b) => {
+      // Sort logic
+    });
+  }
+}
+```
+
+**Key Rule:** Always use immutable updates with pure pipes:
+```typescript
+// Pure pipes won't detect this change
+this.items.push(newItem);
+
+// Use this instead - creates new reference
+this.items = [...this.items, newItem];
+```
+
 ## Code Quality Rules
 
 1. **Keep components under 200 lines** - Split larger components into modularized folders
@@ -943,3 +1039,4 @@ core/http/
 7. **Comments** - Explain "why", not "what"
 8. **Testing** - Aim for 80%+ coverage on core modules
 9. **Modularization** - Follow Phase 2+ modularization patterns when components exceed 200 lines
+10. **Performance** - Use trackBy for lists, OnPush for change detection, pure pipes for transformations

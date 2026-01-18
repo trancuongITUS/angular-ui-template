@@ -6,7 +6,8 @@ export interface GroupedItems<T> {
 }
 
 /**
- * Groups an array of objects by a specified property
+ * Groups an array of objects by a specified property.
+ * This is a pure pipe - it only re-runs when input reference changes.
  *
  * @example
  * ```html
@@ -16,13 +17,13 @@ export interface GroupedItems<T> {
  * </div>
  * ```
  *
- * @note This is an impure pipe and may impact performance with large datasets.
- * Consider grouping in the component for better performance.
+ * @note For the pipe to detect changes, ensure array is replaced (not mutated):
+ * - Instead of: `this.items.push(newItem);`
+ * - Use: `this.items = [...this.items, newItem];`
  */
 @Pipe({
     name: 'groupBy',
-    standalone: true,
-    pure: false
+    standalone: true
 })
 export class GroupByPipe implements PipeTransform {
     transform<T>(items: T[], property: keyof T): GroupedItems<T>[] {

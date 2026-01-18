@@ -3,7 +3,8 @@ import { Pipe, PipeTransform } from '@angular/core';
 type SortOrder = 'asc' | 'desc';
 
 /**
- * Sorts an array by a property or multiple properties
+ * Sorts an array by a property or multiple properties.
+ * This is a pure pipe - it only re-runs when input reference changes.
  *
  * @example
  * ```html
@@ -12,13 +13,13 @@ type SortOrder = 'asc' | 'desc';
  * <div *ngFor="let user of users | orderBy: ['department', 'name']">...</div>
  * ```
  *
- * @note This is an impure pipe and may impact performance with large datasets.
- * Consider sorting in the component for better performance.
+ * @note For the pipe to detect changes, ensure array is replaced (not mutated):
+ * - Instead of: `this.items.push(newItem);`
+ * - Use: `this.items = [...this.items, newItem];`
  */
 @Pipe({
     name: 'orderBy',
-    standalone: true,
-    pure: false
+    standalone: true
 })
 export class OrderByPipe implements PipeTransform {
     transform<T>(items: T[], property: keyof T | (keyof T)[], order: SortOrder = 'asc'): T[] {
