@@ -24,6 +24,7 @@
     currentPageReportTemplate="Showing {first} to {last} of {totalRecords} products"
     [showCurrentPageReport]="true"
     [rowsPerPageOptions]="[10, 20, 30]"
+    aria-label="Products management table"
 >
     <ng-template #caption>
         <div class="flex items-center justify-between">
@@ -83,21 +84,21 @@
                 <p-tag [value]="product.inventoryStatus" [severity]="getSeverity(product.inventoryStatus)" />
             </td>
             <td>
-                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editProduct(product)" />
-                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(product)" />
+                <p-button icon="pi pi-pencil" class="mr-2" [rounded]="true" [outlined]="true" (click)="editProduct(product)" aria-label="Edit product" />
+                <p-button icon="pi pi-trash" severity="danger" [rounded]="true" [outlined]="true" (click)="deleteProduct(product)" aria-label="Delete product" />
             </td>
         </tr>
     </ng-template>
 </p-table>
 
-<p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true">
+<p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true" aria-labelledby="product-dialog-title">
     <ng-template #content>
         <div class="flex flex-col gap-6">
             <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.image" class="block m-auto pb-4" *ngIf="product.image" />
             <div>
                 <label for="name" class="block font-bold mb-3">Name</label>
-                <input type="text" pInputText id="name" [(ngModel)]="product.name" required autofocus fluid />
-                <small class="text-red-500" *ngIf="submitted && !product.name">Name is required.</small>
+                <input type="text" pInputText id="name" [(ngModel)]="product.name" required autofocus fluid [attr.aria-describedby]="submitted && !product.name ? 'name-error' : null" />
+                <small id="name-error" class="text-red-500" *ngIf="submitted && !product.name">Name is required.</small>
             </div>
             <div>
                 <label for="description" class="block font-bold mb-3">Description</label>

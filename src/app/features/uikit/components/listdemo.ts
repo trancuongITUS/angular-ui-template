@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
@@ -62,7 +62,7 @@ import { getStatusSeverity, TagSeverity } from '@shared/utils/severity.utils';
                                     <div class="flex flex-col md:items-end gap-8">
                                         <span class="text-xl font-semibold">$ {{ item.price }}</span>
                                         <div class="flex flex-row-reverse md:flex-row gap-2">
-                                            <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true"></p-button>
+                                            <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true" aria-label="Add to favorites"></p-button>
                                             <p-button icon="pi pi-shopping-cart" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" styleClass="flex-auto md:flex-initial whitespace-nowrap"></p-button>
                                         </div>
                                     </div>
@@ -115,7 +115,7 @@ import { getStatusSeverity, TagSeverity } from '@shared/utils/severity.utils';
                                         <span class="text-2xl font-semibold">$ {{ item.price }}</span>
                                         <div class="flex gap-2">
                                             <p-button icon="pi pi-shopping-cart" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" class="flex-auto whitespace-nowrap" styleClass="w-full"></p-button>
-                                            <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true"></p-button>
+                                            <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true" aria-label="Add to favorites"></p-button>
                                         </div>
                                     </div>
                                 </div>
@@ -159,7 +159,7 @@ import { getStatusSeverity, TagSeverity } from '@shared/utils/severity.utils';
     `,
     providers: [ProductService]
 })
-export class ListDemo {
+export class ListDemo implements OnInit {
     layout: 'list' | 'grid' = 'list';
 
     options = ['list', 'grid'];

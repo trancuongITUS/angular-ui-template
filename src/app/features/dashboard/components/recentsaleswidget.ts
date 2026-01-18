@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, signal } from '@angular/core';
 import { RippleModule } from 'primeng/ripple';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
@@ -29,7 +29,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
                     <td style="width: 35%; min-width: 7rem;">{{ product.name }}</td>
                     <td style="width: 35%; min-width: 8rem;">{{ product.price | currency: 'USD' }}</td>
                     <td style="width: 15%;">
-                        <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only"></button>
+                        <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only" aria-label="View product details"></button>
                     </td>
                 </tr>
             </ng-template>
@@ -37,7 +37,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
     </div>`,
     providers: [ProductService]
 })
-export class RecentSalesWidget {
+export class RecentSalesWidget implements OnInit {
     products = signal<Product[]>([]);
 
     constructor(private productService: ProductService) {}

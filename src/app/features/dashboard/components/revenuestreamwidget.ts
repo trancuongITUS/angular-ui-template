@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { debounceTime, Subscription } from 'rxjs';
 import { LayoutService } from '@layout/services/layout.service';
@@ -13,7 +13,7 @@ import { LayoutService } from '@layout/services/layout.service';
         <p-chart type="bar" [data]="chartData()" [options]="chartOptions()" class="h-100" />
     </div>`
 })
-export class RevenueStreamWidget {
+export class RevenueStreamWidget implements OnInit, OnDestroy {
     chartData = signal<any>(null);
 
     chartOptions = signal<any>(null);

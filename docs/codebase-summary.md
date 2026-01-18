@@ -270,6 +270,16 @@ Shared utility functions (Phase 4):
 - **menu.model.ts** - Menu item structures
 - **api.model.ts** - API response types
 
+### Constants (`shared/constants/`)
+- **messages.ts** - Centralized UI message strings for i18n preparation (Phase 5)
+  - ERRORS: General, Network, Unauthorized, NotFound, Server, Forbidden
+  - SUCCESS: Saved, Deleted, Created, Updated, Copied
+  - VALIDATION: Required, Email, Password, Mismatch, Format
+  - CONFIRMATION: Delete, UnsavedChanges, Logout
+  - LOADING: Default, Saving, Processing
+  - EMPTY_STATE: NoData, NoResults, NoItems
+  - Type helpers for TypeScript-safe message access
+
 ## Technology Stack Details
 
 ### Frontend Framework

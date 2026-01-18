@@ -1028,6 +1028,113 @@ this.items.push(newItem);
 this.items = [...this.items, newItem];
 ```
 
+## Accessibility Patterns (Phase 5+)
+
+### ARIA Labels for Icon-Only Buttons
+
+Always provide descriptive aria-label for buttons with only icons:
+
+```typescript
+// Template
+<p-button icon="pi pi-pencil" [rounded]="true" [outlined]="true"
+          (click)="editItem()" aria-label="Edit item" />
+<p-button icon="pi pi-trash" severity="danger" [rounded]="true"
+          (click)="deleteItem()" aria-label="Delete item" />
+
+// Do NOT use
+<p-button icon="pi pi-pencil" [rounded]="true"></p-button>  <!-- Inaccessible -->
+```
+
+### ARIA Labels for Data Tables
+
+Include aria-label on tables for screen reader context:
+
+```html
+<p-table [value]="items" aria-label="Items management table">
+  <!-- Table content -->
+</p-table>
+```
+
+### Form Input Accessibility
+
+Ensure all form inputs have proper associations and error messaging:
+
+```html
+<label for="productName" class="block font-bold mb-3">Name</label>
+<input type="text" id="productName"
+       [attr.aria-describedby]="submitted && !product.name ? 'name-error' : null" />
+<small id="name-error" class="text-red-500" *ngIf="submitted && !product.name">
+  Name is required.
+</small>
+```
+
+### Dialog Accessibility
+
+Use aria-labelledby to connect dialog header:
+
+```html
+<p-dialog [(visible)]="dialogVisible" header="Product Details"
+          aria-labelledby="product-dialog-title">
+  <ng-template #content>
+    <!-- Dialog content -->
+  </ng-template>
+</p-dialog>
+```
+
+### Image Alt Text
+
+Always provide meaningful alt text for images:
+
+```html
+<!-- Good -->
+<img [src]="imagePath" [alt]="product.name" />
+<img [src]="logoPath" alt="Company logo" />
+
+<!-- Bad - Avoid -->
+<img [src]="imagePath" alt="Image" />
+<img [src]="imagePath" />
+```
+
+### Semantic HTML
+
+Use semantic elements for better accessibility:
+
+```html
+<!-- Good -->
+<nav>Navigation menu</nav>
+<main>Main content</main>
+<footer>Footer section</footer>
+<aside>Sidebar</aside>
+
+<!-- Avoid generic divs where semantic elements apply -->
+<div>Navigation menu</div>  <!-- Use <nav> instead -->
+```
+
+### Color Contrast
+
+Ensure text meets WCAG AA standards (4.5:1 for normal text, 3:1 for large text):
+- Use utility classes with proper contrast ratios
+- Test with tools like WebAIM Contrast Checker
+- Don't rely on color alone to convey information
+
+### Keyboard Navigation
+
+Ensure all interactive elements are keyboard accessible:
+- Use native form elements and buttons
+- Maintain logical tab order
+- Provide visible focus indicators
+- Test with keyboard-only navigation
+
+### Guidelines Summary
+- **Buttons:** Always use aria-label for icon-only buttons
+- **Tables:** Add aria-label for context
+- **Forms:** Use proper label associations and error descriptions
+- **Images:** Include meaningful alt text
+- **Dialogs:** Use aria-labelledby for headers
+- **Color:** Don't rely on color alone
+- **Keyboard:** Ensure full keyboard accessibility
+- **Focus:** Maintain visible focus indicators
+
 ## Code Quality Rules
 
 1. **Keep components under 200 lines** - Split larger components into modularized folders
@@ -1040,6 +1147,7 @@ this.items = [...this.items, newItem];
 8. **Testing** - Aim for 80%+ coverage on core modules
 9. **Modularization** - Follow Phase 2+ modularization patterns when components exceed 200 lines
 10. **Performance** - Use trackBy for lists, OnPush for change detection, pure pipes for transformations
+11. **Accessibility** - Follow Phase 5+ accessibility patterns for ARIA labels, semantic HTML, and keyboard navigation
 
 ## Security & Data Validation Patterns (Phase 4+)
 
