@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { MessageService } from 'primeng/api';
+import { NOTIFICATION_DEFAULT_LIFE, NOTIFICATION_EXTENDED_LIFE, NOTIFICATION_MEDIUM_LIFE } from './notification.constants';
 
 /**
  * Notification severity levels matching PrimeNG Toast severity.
@@ -96,10 +97,8 @@ export interface Notification {
 export class NotificationService {
     private readonly messageService = inject(MessageService);
 
-    /**
-     * Default notification lifespan in milliseconds.
-     */
-    private readonly defaultLife = 3000;
+    /** Default notification lifespan in milliseconds */
+    private readonly defaultLife = NOTIFICATION_DEFAULT_LIFE;
 
     /**
      * Shows a success notification.
@@ -212,7 +211,7 @@ export class NotificationService {
                 .join('\n');
         }
 
-        this.showError(message, title, { life: 7000 });
+        this.showError(message, title, { life: NOTIFICATION_EXTENDED_LIFE });
     }
 
     /**
@@ -241,14 +240,14 @@ export class NotificationService {
             load: `Failed to load ${entity}`
         };
 
-        this.showError(messages[operation], 'Operation Failed', { life: 5000 });
+        this.showError(messages[operation], 'Operation Failed', { life: NOTIFICATION_MEDIUM_LIFE });
     }
 
     /**
      * Shows a network error notification.
      */
     showNetworkError(message: string = 'Unable to connect to server. Please check your internet connection.'): void {
-        this.showError(message, 'Network Error', { life: 7000 });
+        this.showError(message, 'Network Error', { life: NOTIFICATION_EXTENDED_LIFE });
     }
 
     /**
@@ -262,7 +261,7 @@ export class NotificationService {
      * Shows an authorization error notification.
      */
     showAuthorizationError(message: string = 'You do not have permission to perform this action.'): void {
-        this.showError(message, 'Access Denied', { life: 5000 });
+        this.showError(message, 'Access Denied', { life: NOTIFICATION_MEDIUM_LIFE });
     }
 
     /**

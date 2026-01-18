@@ -8,6 +8,7 @@ import { PickListModule } from 'primeng/picklist';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TagModule } from 'primeng/tag';
 import { Product, ProductService } from '@core/services/data/product.service';
+import { getStatusSeverity, TagSeverity } from '@shared/utils/severity.utils';
 
 @Component({
     selector: 'app-list-demo',
@@ -199,19 +200,7 @@ export class ListDemo {
         ];
     }
 
-    getSeverity(product: Product) {
-        switch (product.inventoryStatus) {
-            case 'INSTOCK':
-                return 'success';
-
-            case 'LOWSTOCK':
-                return 'warn';
-
-            case 'OUTOFSTOCK':
-                return 'danger';
-
-            default:
-                return 'info';
-        }
+    getSeverity(product: Product): TagSeverity {
+        return getStatusSeverity(product.inventoryStatus);
     }
 }

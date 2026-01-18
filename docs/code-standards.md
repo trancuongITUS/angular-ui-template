@@ -1,7 +1,7 @@
 # Code Standards & Patterns
 
-**Version:** 20.0.0
-**Last Updated:** January 15, 2026
+**Version:** 20.3.0
+**Last Updated:** January 18, 2026
 
 ## Overview
 
@@ -1040,3 +1040,141 @@ this.items = [...this.items, newItem];
 8. **Testing** - Aim for 80%+ coverage on core modules
 9. **Modularization** - Follow Phase 2+ modularization patterns when components exceed 200 lines
 10. **Performance** - Use trackBy for lists, OnPush for change detection, pure pipes for transformations
+
+## Security & Data Validation Patterns (Phase 4+)
+
+### Input Validation
+
+Strengthen validation in form components to prevent invalid data submission:
+
+```typescript
+// Login component with email validation
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class LoginComponent {
+  email = signal('');
+  password = signal('');
+
+  // Computed signal to validate form readiness
+  isFormValid = computed(() => {
+    const emailVal = this.email().trim();
+    const passwordVal = this.password().trim();
+    return emailVal.length > 0 && passwordVal.length > 0;
+  });
+
+  onLogin(): void {
+    if (!this.isFormValid()) {
+      this.notificationService.warn('Please enter valid credentials');
+      return;
+    }
+    // Proceed with login
+  }
+}
+```
+
+### XSS Prevention with Safe Pipe
+
+Use the safe pipe for sanitizing dynamic content from untrusted sources:
+
+```typescript
+// Pipe pattern with multi-type sanitization
+@Pipe({
+  name: 'safe',
+  pure: true,
+  standalone: true
+})
+export class SafePipe implements PipeTransform {
+  transform(value: string, type: 'html' | 'style' | 'url' | 'resourceUrl'): SafeHtml | ... {
+    switch (type) {
+      case 'html':
+        // Sanitize first, then trust
+        const sanitized = this.sanitizer.sanitize(SecurityContext.HTML, value);
+        return this.sanitizer.bypassSecurityTrustHtml(sanitized || '');
+      case 'url':
+        // Prevent javascript: protocol attacks
+        const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, value);
+        return this.sanitizer.bypassSecurityTrustUrl(sanitizedUrl || '');
+      // ... other types
+    }
+  }
+}
+```
+
+Template usage:
+```html
+<!-- Safe HTML rendering with sanitization -->
+<div [innerHTML]="userComment | safe: 'html'"></div>
+
+<!-- Safe URL binding -->
+<a [href]="dynamicLink | safe: 'url'">Safe Link</a>
+```
+
+### Notification Constants
+
+Centralize notification timing for consistency:
+
+```typescript
+// notification.constants.ts
+export const NOTIFICATION_DEFAULT_LIFE = 3000;    // Standard: 3 seconds
+export const NOTIFICATION_MEDIUM_LIFE = 5000;     // Errors: 5 seconds
+export const NOTIFICATION_EXTENDED_LIFE = 7000;   // Validation: 7 seconds
+
+// Usage in service
+this.messageService.add({
+  severity: 'error',
+  summary: 'Error',
+  detail: 'Validation failed',
+  life: NOTIFICATION_EXTENDED_LIFE
+});
+```
+
+### Status Severity Mapping Utility
+
+Provide type-safe status to severity conversion:
+
+```typescript
+// severity.utils.ts
+export type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contrast';
+
+export function getStatusSeverity(status: string | undefined | null): TagSeverity {
+  if (!status) return 'info';
+
+  // Pre-defined status sets for consistency
+  const SUCCESS_STATUSES = new Set(['INSTOCK', 'COMPLETED', 'APPROVED']);
+  const WARNING_STATUSES = new Set(['LOWSTOCK', 'PENDING', 'PROCESSING']);
+  const DANGER_STATUSES = new Set(['OUTOFSTOCK', 'CANCELLED', 'FAILED']);
+
+  if (SUCCESS_STATUSES.has(status.trim())) return 'success';
+  if (WARNING_STATUSES.has(status.trim())) return 'warn';
+  if (DANGER_STATUSES.has(status.trim())) return 'danger';
+  return 'info';
+}
+
+// Template usage with PrimeNG tags
+<p-tag [value]="product.status" [severity]="product.status | getStatusSeverity"></p-tag>
+```
+
+### Helper Functions for CRUD
+
+Organize common transformation and validation logic:
+
+```typescript
+// crud.helpers.ts - Centralized CRUD utilities
+export function validateProductData(product: any): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (!product.name?.trim()) errors.push('Name is required');
+  if (!product.price || product.price < 0) errors.push('Price must be positive');
+
+  return { valid: errors.length === 0, errors };
+}
+
+export function transformProductForAPI(product: Partial<Product>): any {
+  return {
+    ...product,
+    name: product.name?.trim(),
+    price: Number(product.price)
+  };
+}
+```

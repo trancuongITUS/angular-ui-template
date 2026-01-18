@@ -1,17 +1,11 @@
+import { getStatusSeverity, TagSeverity } from '@shared/utils/severity.utils';
+
 /**
  * Returns severity tag for inventory status display.
+ * @deprecated Use getStatusSeverity from '@shared/utils' directly
  */
-export function getCrudSeverity(status: string): 'success' | 'warn' | 'danger' | 'info' {
-    switch (status) {
-        case 'INSTOCK':
-            return 'success';
-        case 'LOWSTOCK':
-            return 'warn';
-        case 'OUTOFSTOCK':
-            return 'danger';
-        default:
-            return 'info';
-    }
+export function getCrudSeverity(status: string): TagSeverity {
+    return getStatusSeverity(status);
 }
 
 /**

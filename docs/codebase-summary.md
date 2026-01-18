@@ -1,7 +1,7 @@
 # Codebase Summary
 
-**Version:** 20.0.1
-**Last Updated:** January 17, 2026
+**Version:** 20.3.0
+**Last Updated:** January 18, 2026
 
 ## Directory Structure Overview
 
@@ -135,7 +135,10 @@ Configuration Files:
   - **logger.service.ts** - Application logging
   - **log-formatter.ts** - Log message formatting
   - **index.ts** - Barrel export
-- **notification.service.ts** - User notifications (toast, confirm)
+- **notification.service.ts** - User notifications (toast, confirm) with severity support
+- **notification.constants.ts** - Notification timing constants (Phase 4)
+  - Configurable durations for different notification types
+  - Default (3s), Medium (5s), Extended (7s) timings
 - **data/**
   - **customer.service.ts** - Customer CRUD (293 KB, large demo dataset)
   - **product.service.ts** - Product management
@@ -236,13 +239,14 @@ Configuration Files:
 - Full test coverage (11 tests)
 
 ### Pipes (`shared/pipes/`)
-13 custom pipes:
+13 custom pipes (all pure for optimal performance):
 - **capitalize.pipe.ts** - Capitalize text
 - **truncate.pipe.ts** - Truncate text
 - **format-currency.pipe.ts** - Currency formatting
 - **format-date.pipe.ts** - Date formatting
-- **safe-html.pipe.ts** - Sanitize HTML
-- **safe-url.pipe.ts** - Sanitize URLs
+- **safe.pipe.ts** - XSS-safe sanitization with multi-type support (Phase 4)
+  - HTML, Style, Script, URL, ResourceUrl types
+  - Sanitizes then trusts content to prevent XSS attacks
 - **filter.pipe.ts** - Array filtering
 - **sort.pipe.ts** - Array sorting
 - **group-by.pipe.ts** - Group array items
@@ -250,6 +254,14 @@ Configuration Files:
 - **bytes.pipe.ts** - Format bytes to readable size
 - **percentage.pipe.ts** - Format percentages
 - **phone.pipe.ts** - Format phone numbers
+
+### Utilities (`shared/utils/`)
+Shared utility functions (Phase 4):
+- **severity.utils.ts** - Status to severity mapping
+  - Maps status strings to PrimeNG Tag severities
+  - Handles inventory, order, and customer statuses
+  - Type-safe severity types
+- **index.ts** - Barrel export for utilities
 
 ### Models & Types (`shared/models/`)
 - **component.model.ts** - Component property types
