@@ -1,7 +1,10 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
+import { TranslocoService } from '@jsverse/transloco';
+import { Subscription } from 'rxjs';
+import { MenuItem } from 'primeng/api';
 
 @Component({
     standalone: true,
@@ -10,7 +13,7 @@ import { MenuModule } from 'primeng/menu';
     imports: [CommonModule, ButtonModule, MenuModule],
     template: ` <div class="card">
         <div class="flex justify-between items-center mb-6">
-            <div class="font-semibold text-xl">Best Selling Products</div>
+            <div class="font-semibold text-xl">{{ title }}</div>
             <div>
                 <button pButton type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
                 <p-menu #menu [popup]="true" [model]="items"></p-menu>
@@ -92,11 +95,31 @@ import { MenuModule } from 'primeng/menu';
         </ul>
     </div>`
 })
-export class BestSellingWidget {
-    menu = null;
+export class BestSellingWidget implements OnInit, OnDestroy {
+    private readonly translocoService = inject(TranslocoService);
+    private langSubscription?: Subscription;
 
-    items = [
-        { label: 'Add New', icon: 'pi pi-fw pi-plus' },
-        { label: 'Remove', icon: 'pi pi-fw pi-trash' }
-    ];
+    menu = null;
+    title = '';
+    items: MenuItem[] = [];
+
+    ngOnInit() {
+        this.updateTranslations();
+        this.langSubscription = this.translocoService.langChanges$.subscribe(() => {
+            this.updateTranslations();
+        });
+    }
+
+    ngOnDestroy() {
+        this.langSubscription?.unsubscribe();
+    }
+
+    private updateTranslations() {
+        const t = (key: string) => this.translocoService.translate(key);
+        this.title = t('dashboard.bestSellers');
+        this.items = [
+            { label: t('dashboard.addNew'), icon: 'pi pi-fw pi-plus' },
+            { label: t('dashboard.remove'), icon: 'pi pi-fw pi-trash' }
+        ];
+    }
 }

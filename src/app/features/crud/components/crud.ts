@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, OnInit, signal, ViewChild, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, signal, ViewChild, inject } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Table, TableModule } from 'primeng/table';
 import { CommonModule } from '@angular/common';
@@ -18,6 +18,8 @@ import { TagModule } from 'primeng/tag';
 import { InputIconModule } from 'primeng/inputicon';
 import { IconFieldModule } from 'primeng/iconfield';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { Subscription } from 'rxjs';
 import { Product, ProductService } from '@core/services/data/product.service';
 import { InventoryStatus, INVENTORY_STATUSES } from '@shared/models';
 import { CrudColumn, CrudExportColumn, CRUD_TABLE_COLUMNS, createExportColumns, getCrudSeverity, createProductId } from './crud.helpers';
@@ -44,15 +46,18 @@ import { CrudColumn, CrudExportColumn, CRUD_TABLE_COLUMNS, createExportColumns, 
         TagModule,
         InputIconModule,
         IconFieldModule,
-        ConfirmDialogModule
+        ConfirmDialogModule,
+        TranslocoModule
     ],
     templateUrl: './crud.component.html',
     providers: [MessageService, ProductService, ConfirmationService]
 })
-export class CrudComponent implements OnInit {
+export class CrudComponent implements OnInit, OnDestroy {
     private readonly productService = inject(ProductService);
     private readonly messageService = inject(MessageService);
     private readonly confirmationService = inject(ConfirmationService);
+    private readonly translocoService = inject(TranslocoService);
+    private langSubscription?: Subscription;
 
     @ViewChild('dt') dt!: Table;
 
@@ -71,6 +76,14 @@ export class CrudComponent implements OnInit {
 
     ngOnInit() {
         this.loadDemoData();
+        // Subscribe to language changes
+        this.langSubscription = this.translocoService.langChanges$.subscribe(() => {
+            // Trigger change detection for translated content
+        });
+    }
+
+    ngOnDestroy() {
+        this.langSubscription?.unsubscribe();
     }
 
     loadDemoData() {
@@ -98,17 +111,18 @@ export class CrudComponent implements OnInit {
     }
 
     deleteSelectedProducts() {
+        const t = (key: string) => this.translocoService.translate(key);
         this.confirmationService.confirm({
-            message: 'Are you sure you want to delete the selected products?',
-            header: 'Confirm',
+            message: t('crud.confirmDeleteSelected'),
+            header: t('common.confirm'),
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
                 this.products.set(this.products().filter((val) => !this.selectedProducts?.includes(val)));
                 this.selectedProducts = null;
                 this.messageService.add({
                     severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Products Deleted',
+                    summary: t('crud.successful'),
+                    detail: t('crud.productsDeleted'),
                     life: 3000
                 });
             }
@@ -121,17 +135,18 @@ export class CrudComponent implements OnInit {
     }
 
     deleteProduct(product: Product) {
+        const t = (key: string, params?: object) => this.translocoService.translate(key, params);
         this.confirmationService.confirm({
-            message: 'Are you sure you want to delete ' + product.name + '?',
-            header: 'Confirm',
+            message: t('crud.confirmDeleteProduct', { name: product.name }),
+            header: t('common.confirm'),
             icon: 'pi pi-exclamation-triangle',
             accept: () => {
                 this.products.set(this.products().filter((val) => val.id !== product.id));
                 this.product = {};
                 this.messageService.add({
                     severity: 'success',
-                    summary: 'Successful',
-                    detail: 'Product Deleted',
+                    summary: t('crud.successful'),
+                    detail: t('crud.productDeleted'),
                     life: 3000
                 });
             }
@@ -165,6 +180,7 @@ export class CrudComponent implements OnInit {
             return;
         }
 
+        const t = (key: string) => this.translocoService.translate(key);
         const _products = this.products();
 
         if (this.product.id) {
@@ -172,8 +188,8 @@ export class CrudComponent implements OnInit {
             this.products.set([..._products]);
             this.messageService.add({
                 severity: 'success',
-                summary: 'Successful',
-                detail: 'Product Updated',
+                summary: t('crud.successful'),
+                detail: t('crud.productUpdated'),
                 life: 3000
             });
         } else {
@@ -181,8 +197,8 @@ export class CrudComponent implements OnInit {
             this.product.image = 'product-placeholder.svg';
             this.messageService.add({
                 severity: 'success',
-                summary: 'Successful',
-                detail: 'Product Created',
+                summary: t('crud.successful'),
+                detail: t('crud.productCreated'),
                 life: 3000
             });
             this.products.set([..._products, this.product]);

@@ -114,23 +114,61 @@
     "recentSales": "Recent Sales",
     "bestSellers": "Best Selling Products",
     "revenue": "Revenue",
-    "notifications": "Notifications"
+    "revenueStream": "Revenue Stream",
+    "notifications": "Notifications",
+    "orders": "Orders",
+    "customers": "Customers",
+    "comments": "Comments",
+    "unread": "Unread",
+    "newSinceLastVisit": "new since last visit",
+    "sinceLastWeek": "since last week",
+    "newlyRegistered": "newly registered",
+    "responded": "responded",
+    "today": "TODAY",
+    "yesterday": "YESTERDAY",
+    "lastWeek": "LAST WEEK",
+    "addNew": "Add New",
+    "remove": "Remove",
+    "subscriptions": "Subscriptions",
+    "advertising": "Advertising",
+    "affiliate": "Affiliate"
   },
   "crud": {
     "products": "Products",
     "addProduct": "Add Product",
     "editProduct": "Edit Product",
     "deleteProduct": "Delete Product",
+    "deleteProducts": "Delete Products",
     "productDetails": "Product Details",
+    "manageProducts": "Manage Products",
     "name": "Name",
+    "nameRequired": "Name is required.",
     "description": "Description",
     "price": "Price",
     "category": "Category",
     "quantity": "Quantity",
     "status": "Status",
+    "inventoryStatus": "Inventory Status",
+    "selectStatus": "Select a Status",
     "inStock": "In Stock",
     "lowStock": "Low Stock",
-    "outOfStock": "Out of Stock"
+    "outOfStock": "Out of Stock",
+    "code": "Code",
+    "image": "Image",
+    "reviews": "Reviews",
+    "new": "New",
+    "export": "Export",
+    "confirmDeleteSelected": "Are you sure you want to delete the selected products?",
+    "confirmDeleteProduct": "Are you sure you want to delete {{name}}?",
+    "productsDeleted": "Products Deleted",
+    "productDeleted": "Product Deleted",
+    "productUpdated": "Product Updated",
+    "productCreated": "Product Created",
+    "successful": "Successful",
+    "accessories": "Accessories",
+    "clothing": "Clothing",
+    "electronics": "Electronics",
+    "fitness": "Fitness"
   },
   "table": {
     "showing": "Showing",
@@ -138,10 +176,48 @@
     "entries": "entries",
     "previous": "Previous",
     "next": "Next",
-    "noRecords": "No records found"
+    "noRecords": "No records found",
+    "view": "View"
   },
   "language": {
     "en": "English",
     "vi": "Tiếng Việt"
+  },
+  "pages": {
+    "login": {
+      "welcomeTitle": "Welcome to PrimeLand!",
+      "signInToContinue": "Sign in to continue",
+      "emailPlaceholder": "Email address",
+      "passwordPlaceholder": "Password",
+      "enterBothFields": "Please enter both email and password.",
+      "invalidEmail": "Please enter a valid email address.",
+      "passwordMinLength": "Password must be at least {{length}} characters.",
+      "loginFailed": "Login failed. Please check your credentials."
+    },
+    "accessDenied": {
+      "title": "Access Denied",
+      "message": "You do not have the necessary permissions. Please contact admins.",
+      "goToDashboard": "Go to Dashboard"
+    },
+    "error": {
+      "title": "Error Occurred",
+      "message": "Requested resource is not available.",
+      "goToDashboard": "Go to Dashboard"
+    },
+    "notFound": {
+      "title": "Not Found",
+      "code": "404",
+      "message": "Requested resource is not available.",
+      "faq": "Frequently Asked Questions",
+      "faqDesc": "Ultricies mi quis hendrerit dolor.",
+      "solutionCenter": "Solution Center",
+      "solutionCenterDesc": "Phasellus faucibus scelerisque eleifend.",
+      "permissionManager": "Permission Manager",
+      "permissionManagerDesc": "Accumsan in nisl nisi scelerisque",
+      "goToDashboard": "Go to Dashboard"
+    }
+  },
+  "footer": {
+    "by": "by"
   }
 }

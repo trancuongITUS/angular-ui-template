@@ -3,22 +3,23 @@ import { RippleModule } from 'primeng/ripple';
 import { TableModule } from 'primeng/table';
 import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
+import { TranslocoModule } from '@jsverse/transloco';
 import { Product, ProductService } from '@core/services/data/product.service';
 
 @Component({
     standalone: true,
     selector: 'app-recent-sales-widget',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, TableModule, ButtonModule, RippleModule],
+    imports: [CommonModule, TableModule, ButtonModule, RippleModule, TranslocoModule],
     template: `<div class="card mb-8!">
-        <div class="font-semibold text-xl mb-4">Recent Sales</div>
+        <div class="font-semibold text-xl mb-4">{{ 'dashboard.recentSales' | transloco }}</div>
         <p-table [value]="products()" [paginator]="true" [rows]="5" [rowTrackBy]="trackByProductId" responsiveLayout="scroll">
             <ng-template #header>
                 <tr>
-                    <th>Image</th>
-                    <th pSortableColumn="name">Name <p-sortIcon field="name"></p-sortIcon></th>
-                    <th pSortableColumn="price">Price <p-sortIcon field="price"></p-sortIcon></th>
-                    <th>View</th>
+                    <th>{{ 'crud.image' | transloco }}</th>
+                    <th pSortableColumn="name">{{ 'crud.name' | transloco }} <p-sortIcon field="name"></p-sortIcon></th>
+                    <th pSortableColumn="price">{{ 'crud.price' | transloco }} <p-sortIcon field="price"></p-sortIcon></th>
+                    <th>{{ 'table.view' | transloco }}</th>
                 </tr>
             </ng-template>
             <ng-template #body let-product>

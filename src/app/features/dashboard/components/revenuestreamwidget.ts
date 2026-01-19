@@ -1,5 +1,6 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, inject } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
 import { debounceTime, Subscription } from 'rxjs';
 import { LayoutService } from '@layout/services/layout.service';
 
@@ -7,18 +8,21 @@ import { LayoutService } from '@layout/services/layout.service';
     standalone: true,
     selector: 'app-revenue-stream-widget',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ChartModule],
+    imports: [ChartModule, TranslocoModule],
     template: `<div class="card mb-8!">
-        <div class="font-semibold text-xl mb-4">Revenue Stream</div>
+        <div class="font-semibold text-xl mb-4">{{ 'dashboard.revenueStream' | transloco }}</div>
         <p-chart type="bar" [data]="chartData()" [options]="chartOptions()" class="h-100" />
     </div>`
 })
 export class RevenueStreamWidget implements OnInit, OnDestroy {
+    private readonly translocoService = inject(TranslocoService);
+
     chartData = signal<any>(null);
 
     chartOptions = signal<any>(null);
 
     subscription!: Subscription;
+    langSubscription?: Subscription;
 
     constructor(public layoutService: LayoutService) {
         this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
@@ -28,6 +32,9 @@ export class RevenueStreamWidget implements OnInit, OnDestroy {
 
     ngOnInit() {
         this.initChart();
+        this.langSubscription = this.translocoService.langChanges$.subscribe(() => {
+            this.initChart();
+        });
     }
 
     initChart() {
@@ -35,27 +42,28 @@ export class RevenueStreamWidget implements OnInit, OnDestroy {
         const textColor = documentStyle.getPropertyValue('--text-color');
         const borderColor = documentStyle.getPropertyValue('--surface-border');
         const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
+        const t = (key: string) => this.translocoService.translate(key);
 
         this.chartData.set({
             labels: ['Q1', 'Q2', 'Q3', 'Q4'],
             datasets: [
                 {
                     type: 'bar',
-                    label: 'Subscriptions',
+                    label: t('dashboard.subscriptions'),
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
                     data: [4000, 10000, 15000, 4000],
                     barThickness: 32
                 },
                 {
                     type: 'bar',
-                    label: 'Advertising',
+                    label: t('dashboard.advertising'),
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-300'),
                     data: [2100, 8400, 2400, 7500],
                     barThickness: 32
                 },
                 {
                     type: 'bar',
-                    label: 'Affiliate',
+                    label: t('dashboard.affiliate'),
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-200'),
                     data: [4100, 5200, 3400, 7400],
                     borderRadius: {
@@ -110,5 +118,6 @@ export class RevenueStreamWidget implements OnInit, OnDestroy {
         if (this.subscription) {
             this.subscription.unsubscribe();
         }
+        this.langSubscription?.unsubscribe();
     }
 }
