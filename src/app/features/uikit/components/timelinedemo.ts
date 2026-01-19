@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { TimelineModule } from 'primeng/timeline';
 import { CardModule } from 'primeng/card';
 import { CommonModule } from '@angular/common';
@@ -65,8 +65,7 @@ import { ButtonModule } from 'primeng/button';
                         <p-card [header]="event.status" [subheader]="event.date">
                             <img *ngIf="event.image" [src]="'/images/product/' + event.image" [alt]="event.name" width="200" class="shadow" />
                             <p>
-                                Lorem ipsum dolor sit amet, consectetur adipisicing elit. Inventore sed consequuntur error repudiandae numquam deserunt quisquam repellat libero asperiores earum nam nobis, culpa ratione quam perferendis esse,
-                                cupiditate neque quas!
+                                This order has been processed and shipped. Track your delivery status using the tracking number provided in your confirmation email.
                             </p>
                             <p-button label="Read more" [text]="true" />
                         </p-card>
@@ -102,7 +101,7 @@ import { ButtonModule } from 'primeng/button';
         </div>
     </div>`
 })
-export class TimelineDemo {
+export class TimelineDemo implements OnInit {
     events1: any[] = [];
 
     events2: any[] = [];

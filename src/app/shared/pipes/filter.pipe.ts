@@ -1,7 +1,8 @@
 import { Pipe, PipeTransform } from '@angular/core';
 
 /**
- * Filters an array based on a search term or predicate function
+ * Filters an array based on a search term or predicate function.
+ * This is a pure pipe - it only re-runs when input reference changes.
  *
  * @example
  * ```html
@@ -10,13 +11,13 @@ import { Pipe, PipeTransform } from '@angular/core';
  * </div>
  * ```
  *
- * @note This is an impure pipe and may impact performance with large datasets.
- * Consider filtering in the component for better performance.
+ * @note For the pipe to detect changes, ensure array is replaced (not mutated):
+ * - Instead of: `this.items.push(newItem);`
+ * - Use: `this.items = [...this.items, newItem];`
  */
 @Pipe({
     name: 'filter',
-    standalone: true,
-    pure: false
+    standalone: true
 })
 export class FilterPipe implements PipeTransform {
     transform<T>(items: T[], searchTerm: string | ((item: T) => boolean), property?: keyof T): T[] {

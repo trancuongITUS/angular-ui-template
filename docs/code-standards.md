@@ -1,7 +1,7 @@
 # Code Standards & Patterns
 
-**Version:** 20.0.0
-**Last Updated:** January 15, 2026
+**Version:** 20.3.0
+**Last Updated:** January 18, 2026
 
 ## Overview
 
@@ -534,7 +534,9 @@ export class ClickOutsideDirective {
 
 ## Pipe Patterns
 
-### Stateless Pure Pipe
+### Pure Pipes (Recommended Default)
+
+**Pure pipes** (default) only re-execute when input reference changes. Use for performance-critical transformations.
 
 ```typescript
 import { Pipe, PipeTransform } from '@angular/core';
@@ -542,7 +544,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'capitalize',
   standalone: true,
-  pure: true
+  pure: true  // Default - only re-runs on input reference change
 })
 export class CapitalizePipe implements PipeTransform {
   transform(value: string): string {
@@ -554,7 +556,18 @@ export class CapitalizePipe implements PipeTransform {
 // Usage: {{ 'hello' | capitalize }} => "Hello"
 ```
 
-### Stateful Pipe with Parameters
+**Important:** For pure pipes to detect array/object changes, ensure immutable updates:
+```typescript
+// Bad - mutates array, pure pipe won't detect change
+this.items.push(newItem);
+
+// Good - creates new reference, pure pipe detects change
+this.items = [...this.items, newItem];
+```
+
+### Impure Pipes (Use Sparingly)
+
+Only use `pure: false` when absolutely necessary (e.g., async operations). Impacts performance.
 
 ```typescript
 import { Pipe, PipeTransform } from '@angular/core';
@@ -562,7 +575,7 @@ import { Pipe, PipeTransform } from '@angular/core';
 @Pipe({
   name: 'truncate',
   standalone: true,
-  pure: false
+  pure: false  // Re-runs on every change detection cycle
 })
 export class TruncatePipe implements PipeTransform {
   transform(value: string, limit: number = 10, ellipsis: string = '...'): string {
@@ -866,13 +879,410 @@ export class ProductListComponent {
 }
 ```
 
+## Modularization Strategy (Phase 2+)
+
+### Component Modularization Example
+
+When components grow beyond 200 lines, split into modular folders with separated concerns:
+
+**Before (Monolithic):**
+```
+table-demo.ts (400+ lines)
+  - Component logic
+  - Data definitions
+  - Helper functions
+  - HTML template
+```
+
+**After (Modularized):**
+```
+table-demo/
+├── table-demo.component.ts      # Component logic only
+├── table-demo.data.ts            # Mock data & constants
+├── table-demo.helpers.ts         # Helper functions
+├── table-demo.component.html     # Template
+└── index.ts                      # Barrel export
+```
+
+### Service Modularization Example
+
+Split services with multiple responsibilities:
+
+**Before:**
+```
+logger.service.ts (250 lines)
+  - Logging core logic
+  - Log formatting
+  - Timestamp handling
+```
+
+**After:**
+```
+logger/
+├── logger.service.ts             # Core service
+├── log-formatter.ts              # Formatting logic
+└── index.ts                      # Barrel export
+```
+
+### HTTP Utilities Modularization
+
+Extract HTTP-related utilities:
+
+```
+core/http/
+├── base-http.service.ts          # Base HTTP client
+├── http-params-builder.ts        # Query parameter building (Phase 2)
+├── http-error-handler.ts         # Error handling utilities (Phase 2)
+├── http.models.ts                # API response models
+├── api.model.ts                  # Standard API envelope
+└── index.ts                      # Barrel export
+```
+
+### Benefits of Modularization
+- **Readability** - Each file has single responsibility
+- **Maintainability** - Easier to locate and update specific logic
+- **Reusability** - Helpers can be imported independently
+- **Testing** - Smaller, focused test files
+- **Performance** - Better tree-shaking with separated concerns
+
+## Performance Optimization Patterns (Phase 3+)
+
+### TrackBy Function for Lists
+
+Use `trackBy` with `*ngFor` and PrimeNG tables to optimize list rendering. Without trackBy, Angular recreates every DOM element when list changes.
+
+```typescript
+// Component
+export class ProductListComponent {
+  products = signal<Product[]>([]);
+
+  trackByProductId(index: number, item: Product): string {
+    return item.id; // Unique identifier
+  }
+}
+```
+
+```html
+<!-- Template -->
+<div *ngFor="let product of products(); trackBy: trackByProductId">
+  {{ product.name }}
+</div>
+
+<!-- PrimeNG Table -->
+<p-table [value]="products()" [rowTrackBy]="trackByProductId">
+  <p-column field="name" header="Name"></p-column>
+</p-table>
+```
+
+**Benefits:**
+- Reduces DOM node creation from O(n) to O(1) for unchanged items
+- Preserves input focus and scroll position
+- Improves performance on large lists (100+ items)
+
+### ChangeDetectionStrategy.OnPush
+
+Use OnPush strategy for smart/container components to reduce change detection cycles.
+
+```typescript
+import { ChangeDetectionStrategy } from '@angular/core';
+
+@Component({
+  selector: 'app-product-list',
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class ProductListComponent {
+  @Input() products: Product[] = [];
+  @Output() deleted = new EventEmitter<Product>();
+}
+```
+
+**Benefits:**
+- Only runs change detection when @Input/@Output change
+- Works seamlessly with signals (automatic optimization)
+- Reduces CPU usage on large applications
+
+### Pure Pipes (Default)
+
+Mark pipes as `pure: true` to skip re-execution when inputs don't change.
+
+```typescript
+@Pipe({
+  name: 'orderBy',
+  pure: true  // Essential for performance
+})
+export class OrderByPipe implements PipeTransform {
+  transform<T>(items: T[], field: keyof T): T[] {
+    return [...items].sort((a, b) => {
+      // Sort logic
+    });
+  }
+}
+```
+
+**Key Rule:** Always use immutable updates with pure pipes:
+```typescript
+// Pure pipes won't detect this change
+this.items.push(newItem);
+
+// Use this instead - creates new reference
+this.items = [...this.items, newItem];
+```
+
+## Accessibility Patterns (Phase 5+)
+
+### ARIA Labels for Icon-Only Buttons
+
+Always provide descriptive aria-label for buttons with only icons:
+
+```typescript
+// Template
+<p-button icon="pi pi-pencil" [rounded]="true" [outlined]="true"
+          (click)="editItem()" aria-label="Edit item" />
+<p-button icon="pi pi-trash" severity="danger" [rounded]="true"
+          (click)="deleteItem()" aria-label="Delete item" />
+
+// Do NOT use
+<p-button icon="pi pi-pencil" [rounded]="true"></p-button>  <!-- Inaccessible -->
+```
+
+### ARIA Labels for Data Tables
+
+Include aria-label on tables for screen reader context:
+
+```html
+<p-table [value]="items" aria-label="Items management table">
+  <!-- Table content -->
+</p-table>
+```
+
+### Form Input Accessibility
+
+Ensure all form inputs have proper associations and error messaging:
+
+```html
+<label for="productName" class="block font-bold mb-3">Name</label>
+<input type="text" id="productName"
+       [attr.aria-describedby]="submitted && !product.name ? 'name-error' : null" />
+<small id="name-error" class="text-red-500" *ngIf="submitted && !product.name">
+  Name is required.
+</small>
+```
+
+### Dialog Accessibility
+
+Use aria-labelledby to connect dialog header:
+
+```html
+<p-dialog [(visible)]="dialogVisible" header="Product Details"
+          aria-labelledby="product-dialog-title">
+  <ng-template #content>
+    <!-- Dialog content -->
+  </ng-template>
+</p-dialog>
+```
+
+### Image Alt Text
+
+Always provide meaningful alt text for images:
+
+```html
+<!-- Good -->
+<img [src]="imagePath" [alt]="product.name" />
+<img [src]="logoPath" alt="Company logo" />
+
+<!-- Bad - Avoid -->
+<img [src]="imagePath" alt="Image" />
+<img [src]="imagePath" />
+```
+
+### Semantic HTML
+
+Use semantic elements for better accessibility:
+
+```html
+<!-- Good -->
+<nav>Navigation menu</nav>
+<main>Main content</main>
+<footer>Footer section</footer>
+<aside>Sidebar</aside>
+
+<!-- Avoid generic divs where semantic elements apply -->
+<div>Navigation menu</div>  <!-- Use <nav> instead -->
+```
+
+### Color Contrast
+
+Ensure text meets WCAG AA standards (4.5:1 for normal text, 3:1 for large text):
+- Use utility classes with proper contrast ratios
+- Test with tools like WebAIM Contrast Checker
+- Don't rely on color alone to convey information
+
+### Keyboard Navigation
+
+Ensure all interactive elements are keyboard accessible:
+- Use native form elements and buttons
+- Maintain logical tab order
+- Provide visible focus indicators
+- Test with keyboard-only navigation
+
+### Guidelines Summary
+- **Buttons:** Always use aria-label for icon-only buttons
+- **Tables:** Add aria-label for context
+- **Forms:** Use proper label associations and error descriptions
+- **Images:** Include meaningful alt text
+- **Dialogs:** Use aria-labelledby for headers
+- **Color:** Don't rely on color alone
+- **Keyboard:** Ensure full keyboard accessibility
+- **Focus:** Maintain visible focus indicators
+
 ## Code Quality Rules
 
-1. **Keep components under 200 lines** - Split larger components
+1. **Keep components under 200 lines** - Split larger components into modularized folders
 2. **Single Responsibility Principle** - One purpose per file/class
-3. **DRY** - Avoid code duplication, extract to services
+3. **DRY** - Avoid code duplication, extract to services or helpers
 4. **YAGNI** - Don't add features that aren't needed
 5. **Type Safety** - Use TypeScript strict mode always
 6. **Error Handling** - All API calls should have error handlers
 7. **Comments** - Explain "why", not "what"
 8. **Testing** - Aim for 80%+ coverage on core modules
+9. **Modularization** - Follow Phase 2+ modularization patterns when components exceed 200 lines
+10. **Performance** - Use trackBy for lists, OnPush for change detection, pure pipes for transformations
+11. **Accessibility** - Follow Phase 5+ accessibility patterns for ARIA labels, semantic HTML, and keyboard navigation
+
+## Security & Data Validation Patterns (Phase 4+)
+
+### Input Validation
+
+Strengthen validation in form components to prevent invalid data submission:
+
+```typescript
+// Login component with email validation
+@Component({
+  changeDetection: ChangeDetectionStrategy.OnPush
+})
+export class LoginComponent {
+  email = signal('');
+  password = signal('');
+
+  // Computed signal to validate form readiness
+  isFormValid = computed(() => {
+    const emailVal = this.email().trim();
+    const passwordVal = this.password().trim();
+    return emailVal.length > 0 && passwordVal.length > 0;
+  });
+
+  onLogin(): void {
+    if (!this.isFormValid()) {
+      this.notificationService.warn('Please enter valid credentials');
+      return;
+    }
+    // Proceed with login
+  }
+}
+```
+
+### XSS Prevention with Safe Pipe
+
+Use the safe pipe for sanitizing dynamic content from untrusted sources:
+
+```typescript
+// Pipe pattern with multi-type sanitization
+@Pipe({
+  name: 'safe',
+  pure: true,
+  standalone: true
+})
+export class SafePipe implements PipeTransform {
+  transform(value: string, type: 'html' | 'style' | 'url' | 'resourceUrl'): SafeHtml | ... {
+    switch (type) {
+      case 'html':
+        // Sanitize first, then trust
+        const sanitized = this.sanitizer.sanitize(SecurityContext.HTML, value);
+        return this.sanitizer.bypassSecurityTrustHtml(sanitized || '');
+      case 'url':
+        // Prevent javascript: protocol attacks
+        const sanitizedUrl = this.sanitizer.sanitize(SecurityContext.URL, value);
+        return this.sanitizer.bypassSecurityTrustUrl(sanitizedUrl || '');
+      // ... other types
+    }
+  }
+}
+```
+
+Template usage:
+```html
+<!-- Safe HTML rendering with sanitization -->
+<div [innerHTML]="userComment | safe: 'html'"></div>
+
+<!-- Safe URL binding -->
+<a [href]="dynamicLink | safe: 'url'">Safe Link</a>
+```
+
+### Notification Constants
+
+Centralize notification timing for consistency:
+
+```typescript
+// notification.constants.ts
+export const NOTIFICATION_DEFAULT_LIFE = 3000;    // Standard: 3 seconds
+export const NOTIFICATION_MEDIUM_LIFE = 5000;     // Errors: 5 seconds
+export const NOTIFICATION_EXTENDED_LIFE = 7000;   // Validation: 7 seconds
+
+// Usage in service
+this.messageService.add({
+  severity: 'error',
+  summary: 'Error',
+  detail: 'Validation failed',
+  life: NOTIFICATION_EXTENDED_LIFE
+});
+```
+
+### Status Severity Mapping Utility
+
+Provide type-safe status to severity conversion:
+
+```typescript
+// severity.utils.ts
+export type TagSeverity = 'success' | 'warn' | 'danger' | 'info' | 'secondary' | 'contrast';
+
+export function getStatusSeverity(status: string | undefined | null): TagSeverity {
+  if (!status) return 'info';
+
+  // Pre-defined status sets for consistency
+  const SUCCESS_STATUSES = new Set(['INSTOCK', 'COMPLETED', 'APPROVED']);
+  const WARNING_STATUSES = new Set(['LOWSTOCK', 'PENDING', 'PROCESSING']);
+  const DANGER_STATUSES = new Set(['OUTOFSTOCK', 'CANCELLED', 'FAILED']);
+
+  if (SUCCESS_STATUSES.has(status.trim())) return 'success';
+  if (WARNING_STATUSES.has(status.trim())) return 'warn';
+  if (DANGER_STATUSES.has(status.trim())) return 'danger';
+  return 'info';
+}
+
+// Template usage with PrimeNG tags
+<p-tag [value]="product.status" [severity]="product.status | getStatusSeverity"></p-tag>
+```
+
+### Helper Functions for CRUD
+
+Organize common transformation and validation logic:
+
+```typescript
+// crud.helpers.ts - Centralized CRUD utilities
+export function validateProductData(product: any): { valid: boolean; errors: string[] } {
+  const errors: string[] = [];
+
+  if (!product.name?.trim()) errors.push('Name is required');
+  if (!product.price || product.price < 0) errors.push('Price must be positive');
+
+  return { valid: errors.length === 0, errors };
+}
+
+export function transformProductForAPI(product: Partial<Product>): any {
+  return {
+    ...product,
+    name: product.name?.trim(),
+    price: Number(product.price)
+  };
+}
+```

@@ -7,6 +7,7 @@ import { ImageModule } from 'primeng/image';
 import { TagModule } from 'primeng/tag';
 import { PhotoService } from '@core/services/data/photo.service';
 import { Product, ProductService } from '@core/services/data/product.service';
+import { getStatusSeverity, TagSeverity } from '@shared/utils/severity.utils';
 
 @Component({
     selector: 'app-media-demo',
@@ -113,16 +114,7 @@ export class MediaDemo implements OnInit {
         });
     }
 
-    getSeverity(status: string) {
-        switch (status) {
-            case 'INSTOCK':
-                return 'success';
-            case 'LOWSTOCK':
-                return 'warn';
-            case 'OUTOFSTOCK':
-                return 'danger';
-            default:
-                return 'success';
-        }
+    getSeverity(status: string): TagSeverity {
+        return getStatusSeverity(status);
     }
 }

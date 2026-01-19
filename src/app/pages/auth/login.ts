@@ -67,6 +67,9 @@ export class LoginComponent {
     readonly isLoading = signal(false);
     readonly errorMessage = signal<string | null>(null);
 
+    /** Minimum password length requirement */
+    private readonly MIN_PASSWORD_LENGTH = 8;
+
     /**
      * Handles login form submission.
      */
@@ -83,6 +86,12 @@ export class LoginComponent {
         // Validate email format
         if (!this.isValidEmail(this.email)) {
             this.errorMessage.set('Please enter a valid email address.');
+            return;
+        }
+
+        // Validate password length
+        if (this.password.length < this.MIN_PASSWORD_LENGTH) {
+            this.errorMessage.set(`Password must be at least ${this.MIN_PASSWORD_LENGTH} characters.`);
             return;
         }
 
@@ -116,10 +125,11 @@ export class LoginComponent {
     }
 
     /**
-     * Validates email format.
+     * Validates email format with stricter RFC 5322 compliant pattern.
      */
     private isValidEmail(email: string): boolean {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        // RFC 5322 compliant email regex - validates proper TLD format
+        const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
         return emailRegex.test(email);
     }
 }

@@ -1,6 +1,6 @@
 import { Injectable, signal, computed, inject } from '@angular/core';
 import { User, UserProfile } from '../models/user.model';
-import { LoggerService } from '@core/services/logger.service';
+import { LoggerService } from '@core/services';
 
 /**
  * Service for managing user session state.

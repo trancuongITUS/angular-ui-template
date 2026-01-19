@@ -526,12 +526,57 @@ Benefits:
 └─ Only load when needed
 ```
 
-## Performance Optimizations
+## Performance Optimizations (Phase 3+)
 
-### Change Detection
-- OnPush strategy recommended
-- Signals reduce CD cycles
-- Explicit change detection where needed
+### Change Detection Strategy
+```
+OnPush Strategy (Recommended):
+├─ Only runs CD when @Input/@Output change
+├─ Automatic with signals
+├─ Use in smart/container components
+└─ Reduces CPU cycles dramatically
+
+Pattern:
+  @Component({
+    changeDetection: ChangeDetectionStrategy.OnPush
+  })
+  export class MyComponent { }
+```
+
+### List Rendering with TrackBy
+```
+Without TrackBy:
+└─ Array changes → Recreate ALL DOM nodes (O(n))
+
+With TrackBy:
+├─ Array changes → Reuse matching nodes
+├─ Only new/deleted items create/remove DOM (O(1))
+└─ Better performance on lists 100+ items
+
+Implementation:
+  trackByProductId(index: number, item: Product): string {
+    return item.id; // Unique stable identifier
+  }
+
+Template:
+  <div *ngFor="let p of products(); trackBy: trackByProductId">
+  <p-table [rowTrackBy]="trackByProductId">
+```
+
+### Pure Pipes (Default)
+```
+Pure Pipes (pure: true):
+├─ Skip re-execution when inputs unchanged
+├─ Require immutable updates to detect changes
+└─ Essential for performance
+
+Implementation:
+  @Pipe({ name: 'orderBy', pure: true })
+
+Immutable Updates Required:
+  this.items = [...items, newItem];  // ✓ Pure pipe detects
+  this.items.push(newItem);           // ✗ Pure pipe won't detect
+```
 
 ### Memory Management
 ```

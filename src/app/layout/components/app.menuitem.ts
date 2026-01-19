@@ -1,8 +1,8 @@
-import { Component, HostBinding, Input } from '@angular/core';
+import { Component, HostBinding, Input, OnDestroy, OnInit } from '@angular/core';
 import { NavigationEnd, Router, RouterModule } from '@angular/router';
 import { animate, state, style, transition, trigger } from '@angular/animations';
-import { Subscription } from 'rxjs';
-import { filter } from 'rxjs/operators';
+import { Subject } from 'rxjs';
+import { filter, takeUntil } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { RippleModule } from 'primeng/ripple';
 import { MenuItem } from 'primeng/api';
@@ -66,10 +66,9 @@ import { LayoutService } from '../services/layout.service';
             ),
             transition('collapsed <=> expanded', animate('400ms cubic-bezier(0.86, 0, 0.07, 1)'))
         ])
-    ],
-    providers: [LayoutService]
+    ]
 })
-export class AppMenuitem {
+export class AppMenuitem implements OnInit, OnDestroy {
     @Input() item!: MenuItem;
 
     @Input() index!: number;
@@ -80,17 +79,15 @@ export class AppMenuitem {
 
     active = false;
 
-    menuSourceSubscription: Subscription;
-
-    menuResetSubscription: Subscription;
-
     key: string = '';
+
+    private destroy$ = new Subject<void>();
 
     constructor(
         public router: Router,
         private layoutService: LayoutService
     ) {
-        this.menuSourceSubscription = this.layoutService.menuSource$.subscribe((value) => {
+        this.layoutService.menuSource$.pipe(takeUntil(this.destroy$)).subscribe((value) => {
             Promise.resolve(null).then(() => {
                 if (value.routeEvent) {
                     this.active = value.key === this.key || value.key.startsWith(this.key + '-') ? true : false;
@@ -102,15 +99,20 @@ export class AppMenuitem {
             });
         });
 
-        this.menuResetSubscription = this.layoutService.resetSource$.subscribe(() => {
+        this.layoutService.resetSource$.pipe(takeUntil(this.destroy$)).subscribe(() => {
             this.active = false;
         });
 
-        this.router.events.pipe(filter((event) => event instanceof NavigationEnd)).subscribe((params) => {
-            if (this.item.routerLink) {
-                this.updateActiveStateFromRoute();
-            }
-        });
+        this.router.events
+            .pipe(
+                filter((event) => event instanceof NavigationEnd),
+                takeUntil(this.destroy$)
+            )
+            .subscribe(() => {
+                if (this.item.routerLink) {
+                    this.updateActiveStateFromRoute();
+                }
+            });
     }
 
     ngOnInit() {
@@ -158,13 +160,8 @@ export class AppMenuitem {
         return this.active && !this.root;
     }
 
-    ngOnDestroy() {
-        if (this.menuSourceSubscription) {
-            this.menuSourceSubscription.unsubscribe();
-        }
-
-        if (this.menuResetSubscription) {
-            this.menuResetSubscription.unsubscribe();
-        }
+    ngOnDestroy(): void {
+        this.destroy$.next();
+        this.destroy$.complete();
     }
 }

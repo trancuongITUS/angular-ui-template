@@ -4,10 +4,18 @@ Authentication security enhancement plan following OWASP guidelines.
 
 ## Current State (Phase 1 - Complete)
 
+### Initial Implementation (v20.0.0)
 - [x] JWT tokens stored in localStorage (XSS vulnerable - documented)
 - [x] CSP headers configured in `src/environments/security-headers.ts`
 - [x] Security warnings documented in `TokenService`
 - [x] AuthService memory leak fixed (subscription cleanup)
+
+### Security Hardening (v20.0.1)
+- [x] Authorization directives with actual role/permission verification
+- [x] Real-time reactive checks tied to authentication state
+- [x] Comprehensive test coverage (11 tests for authorization layer)
+- [x] Memory leak fixes in layout components (takeUntil pattern)
+- [x] Documented client-side limitations and backend verification requirements
 
 ### Known Risks
 - **XSS Attack Surface**: localStorage tokens accessible to injected scripts

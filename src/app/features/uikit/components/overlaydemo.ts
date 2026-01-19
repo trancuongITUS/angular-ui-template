@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { DialogModule } from 'primeng/dialog';
@@ -15,6 +15,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
 @Component({
     selector: 'app-overlay-demo',
     standalone: true,
+    changeDetection: ChangeDetectionStrategy.OnPush,
     imports: [ToastModule, DialogModule, ButtonModule, DrawerModule, PopoverModule, ConfirmPopupModule, InputTextModule, FormsModule, TooltipModule, TableModule, ToastModule],
     template: ` <div class="flex flex-col md:flex-row gap-8">
         <div class="md:w-1/2">
@@ -22,8 +23,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
                 <div class="font-semibold text-xl mb-4">Dialog</div>
                 <p-dialog header="Dialog" [(visible)]="display" [breakpoints]="{ '960px': '75vw' }" [style]="{ width: '30vw' }" [modal]="true">
                     <p class="leading-normal m-0">
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+                        This is a sample dialog content demonstrating the dialog component. You can use dialogs for confirmations, forms, or displaying detailed information that requires user attention.
                     </p>
                     <ng-template #footer>
                         <p-button label="Save" (click)="close()" />
@@ -37,7 +37,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
                 <div class="flex flex-wrap gap-2">
                     <p-button type="button" label="Show" (click)="toggleDataTable(op2, $event)" />
                     <p-popover #op2 id="overlay_panel" [style]="{ width: '450px' }">
-                        <p-table [value]="products" selectionMode="single" [(selection)]="selectedProduct" dataKey="id" [rows]="5" [paginator]="true" (onRowSelect)="onProductSelect(op2, $event)">
+                        <p-table [value]="products" selectionMode="single" [(selection)]="selectedProduct" dataKey="id" [rowTrackBy]="trackByProductId" [rows]="5" [paginator]="true" (onRowSelect)="onProductSelect(op2, $event)">
                             <ng-template #header>
                                 <tr>
                                     <th>Name</th>
@@ -71,44 +71,39 @@ import { Product, ProductService } from '@core/services/data/product.service';
                 <div class="font-semibold text-xl mb-4">Drawer</div>
                 <p-drawer [(visible)]="visibleLeft" header="Drawer">
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat.
+                        This drawer panel can be used for navigation menus, settings panels, or additional content that doesn't need to be visible at all times.
                     </p>
                 </p-drawer>
 
                 <p-drawer [(visible)]="visibleRight" header="Drawer" position="right">
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat.
+                        This drawer panel can be used for navigation menus, settings panels, or additional content that doesn't need to be visible at all times.
                     </p>
                 </p-drawer>
 
                 <p-drawer [(visible)]="visibleTop" header="Drawer" position="top">
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat.
+                        This drawer panel can be used for navigation menus, settings panels, or additional content that doesn't need to be visible at all times.
                     </p>
                 </p-drawer>
 
                 <p-drawer [(visible)]="visibleBottom" header="Drawer" position="bottom">
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat.
+                        This drawer panel can be used for navigation menus, settings panels, or additional content that doesn't need to be visible at all times.
                     </p>
                 </p-drawer>
 
                 <p-drawer [(visible)]="visibleFull" header="Drawer" position="full">
                     <p>
-                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat.
+                        This drawer panel can be used for navigation menus, settings panels, or additional content that doesn't need to be visible at all times.
                     </p>
                 </p-drawer>
 
-                <p-button icon="pi pi-arrow-right" (click)="visibleLeft = true" [style]="{ marginRight: '0.25em' }" />
-                <p-button icon="pi pi-arrow-left" (click)="visibleRight = true" [style]="{ marginRight: '0.25em' }" />
-                <p-button icon="pi pi-arrow-down" (click)="visibleTop = true" [style]="{ marginRight: '0.25em' }" />
-                <p-button icon="pi pi-arrow-up" (click)="visibleBottom = true" [style]="{ marginRight: '0.25em' }" />
-                <p-button icon="pi pi-external-link" (click)="visibleFull = true" />
+                <p-button icon="pi pi-arrow-right" (click)="visibleLeft = true" [style]="{ marginRight: '0.25em' }" aria-label="Open left drawer" />
+                <p-button icon="pi pi-arrow-left" (click)="visibleRight = true" [style]="{ marginRight: '0.25em' }" aria-label="Open right drawer" />
+                <p-button icon="pi pi-arrow-down" (click)="visibleTop = true" [style]="{ marginRight: '0.25em' }" aria-label="Open top drawer" />
+                <p-button icon="pi pi-arrow-up" (click)="visibleBottom = true" [style]="{ marginRight: '0.25em' }" aria-label="Open bottom drawer" />
+                <p-button icon="pi pi-external-link" (click)="visibleFull = true" aria-label="Open full-screen drawer" />
             </div>
 
             <div class="card">
@@ -226,5 +221,10 @@ export class OverlayDemo implements OnInit {
 
     closeConfirmation() {
         this.displayConfirmation = false;
+    }
+
+    /** Track products by id for table performance optimization */
+    trackByProductId(index: number, item: Product): string {
+        return item.id || String(index);
     }
 }

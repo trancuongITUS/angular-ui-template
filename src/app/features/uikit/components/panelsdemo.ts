@@ -44,9 +44,9 @@ import { ToolbarModule } from 'primeng/toolbar';
                 <div class="font-semibold text-xl mb-4">Toolbar</div>
                 <p-toolbar>
                     <ng-template #start>
-                        <p-button icon="pi pi-plus" class="mr-2" severity="secondary" text />
-                        <p-button icon="pi pi-print" class="mr-2" severity="secondary" text />
-                        <p-button icon="pi pi-upload" severity="secondary" text />
+                        <p-button icon="pi pi-plus" class="mr-2" severity="secondary" text aria-label="Add new item" />
+                        <p-button icon="pi pi-print" class="mr-2" severity="secondary" text aria-label="Print" />
+                        <p-button icon="pi pi-upload" severity="secondary" text aria-label="Upload file" />
                     </ng-template>
 
                     <ng-template #center>
@@ -71,9 +71,7 @@ import { ToolbarModule } from 'primeng/toolbar';
                                 <p-accordion-header>Header I</p-accordion-header>
                                 <p-accordion-content>
                                     <p class="m-0">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-                                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                                        mollit anim id est laborum.
+                                        The accordion component allows you to organize content into collapsible sections. Users can expand or collapse each section to focus on the information they need.
                                     </p>
                                 </p-accordion-content>
                             </p-accordion-panel>
@@ -82,9 +80,7 @@ import { ToolbarModule } from 'primeng/toolbar';
                                 <p-accordion-header>Header II</p-accordion-header>
                                 <p-accordion-content>
                                     <p class="m-0">
-                                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-                                        explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non
-                                        numquam eius modi.
+                                        Each accordion panel can contain different types of content including text, images, forms, or other components. This helps reduce visual clutter on the page.
                                     </p>
                                 </p-accordion-content>
                             </p-accordion-panel>
@@ -93,9 +89,7 @@ import { ToolbarModule } from 'primeng/toolbar';
                                 <p-accordion-header>Header III</p-accordion-header>
                                 <p-accordion-content>
                                     <p class="m-0">
-                                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-                                        explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non
-                                        numquam eius modi.
+                                        Accordions are useful for FAQs, settings panels, and any scenario where you need to present multiple sections of information without overwhelming users.
                                     </p>
                                 </p-accordion-content>
                             </p-accordion-panel>
@@ -112,23 +106,17 @@ import { ToolbarModule } from 'primeng/toolbar';
                             <p-tabpanels>
                                 <p-tabpanel value="0">
                                     <p class="m-0">
-                                        Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-                                        ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt
-                                        mollit anim id est laborum.
+                                        Tabs provide a clean way to switch between different views or sections of content. This is the first tab panel demonstrating basic tab functionality.
                                     </p>
                                 </p-tabpanel>
                                 <p-tabpanel value="1">
                                     <p class="m-0">
-                                        Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt
-                                        explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Consectetur, adipisci velit, sed quia non
-                                        numquam eius modi.
+                                        The second tab shows another view. Tabs are ideal for organizing related content that users might want to compare or switch between quickly.
                                     </p>
                                 </p-tabpanel>
                                 <p-tabpanel value="2">
                                     <p class="m-0">
-                                        At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident,
-                                        similique sunt in culpa qui officia deserunt mollitia animi, id est laborum et dolorum fuga. Et harum quidem rerum facilis est et expedita distinctio. Nam libero tempore, cum soluta nobis est eligendi optio
-                                        cumque nihil impedit quo minus.
+                                        This third tab completes the example. Each tab can contain forms, tables, charts, or any other components needed for your application.
                                     </p>
                                 </p-tabpanel>
                             </p-tabpanels>
@@ -140,9 +128,7 @@ import { ToolbarModule } from 'primeng/toolbar';
                         <div class="font-semibold text-xl mb-4">Panel</div>
                         <p-panel header="Header" [toggleable]="true">
                             <p class="m-0">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
-                                id est laborum.
+                                Panels group content with an optional header and collapsible behavior. Use panels to organize related information into distinct sections within your layout.
                             </p>
                         </p-panel>
                     </div>
@@ -150,9 +136,7 @@ import { ToolbarModule } from 'primeng/toolbar';
                         <div class="font-semibold text-xl mb-4">Fieldset</div>
                         <p-fieldset legend="Legend" [toggleable]="true">
                             <p class="m-0">
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea
-                                commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim
-                                id est laborum.
+                                Fieldsets provide a semantic way to group form elements or related content. The legend describes the group and the content can be toggled visible or hidden.
                             </p>
                         </p-fieldset>
                     </div>

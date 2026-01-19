@@ -1,5 +1,5 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ButtonModule } from 'primeng/button';
 import { DataViewModule } from 'primeng/dataview';
@@ -8,6 +8,7 @@ import { PickListModule } from 'primeng/picklist';
 import { SelectButtonModule } from 'primeng/selectbutton';
 import { TagModule } from 'primeng/tag';
 import { Product, ProductService } from '@core/services/data/product.service';
+import { getStatusSeverity, TagSeverity } from '@shared/utils/severity.utils';
 
 @Component({
     selector: 'app-list-demo',
@@ -61,7 +62,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
                                     <div class="flex flex-col md:items-end gap-8">
                                         <span class="text-xl font-semibold">$ {{ item.price }}</span>
                                         <div class="flex flex-row-reverse md:flex-row gap-2">
-                                            <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true"></p-button>
+                                            <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true" aria-label="Add to favorites"></p-button>
                                             <p-button icon="pi pi-shopping-cart" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" styleClass="flex-auto md:flex-initial whitespace-nowrap"></p-button>
                                         </div>
                                     </div>
@@ -114,7 +115,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
                                         <span class="text-2xl font-semibold">$ {{ item.price }}</span>
                                         <div class="flex gap-2">
                                             <p-button icon="pi pi-shopping-cart" label="Buy Now" [disabled]="item.inventoryStatus === 'OUTOFSTOCK'" class="flex-auto whitespace-nowrap" styleClass="w-full"></p-button>
-                                            <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true"></p-button>
+                                            <p-button icon="pi pi-heart" styleClass="h-full" [outlined]="true" aria-label="Add to favorites"></p-button>
                                         </div>
                                     </div>
                                 </div>
@@ -158,7 +159,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
     `,
     providers: [ProductService]
 })
-export class ListDemo {
+export class ListDemo implements OnInit {
     layout: 'list' | 'grid' = 'list';
 
     options = ['list', 'grid'];
@@ -199,19 +200,7 @@ export class ListDemo {
         ];
     }
 
-    getSeverity(product: Product) {
-        switch (product.inventoryStatus) {
-            case 'INSTOCK':
-                return 'success';
-
-            case 'LOWSTOCK':
-                return 'warn';
-
-            case 'OUTOFSTOCK':
-                return 'danger';
-
-            default:
-                return 'info';
-        }
+    getSeverity(product: Product): TagSeverity {
+        return getStatusSeverity(product.inventoryStatus);
     }
 }

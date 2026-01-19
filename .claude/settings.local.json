@@ -43,7 +43,15 @@
       "Bash(npx:*)",
       "Bash(Out-File -FilePath 'src/app/core/services/data/fixtures/customer-mock-data.json' -Encoding utf8 -NoNewline)",
       "Bash(Write-Host 'Customer mock data extracted')",
-      "Bash(\")"
+      "Bash(\")",
+      "Bash(npm run typecheck:*)",
+      "Bash(npm run:*)",
+      "Bash(git commit:*)",
+      "Bash(del \"C:\\\\Users\\\\viet-cuong.SYSTEM-EXE\\\\Desktop\\\\personal\\\\angular-ui-template\\\\src\\\\app\\\\features\\\\uikit\\\\components\\\\tabledemo.ts\")",
+      "Bash(tree:*)",
+      "Bash(timeout:*)",
+      "Bash(ng test:*)",
+      "Bash(ng build)"
     ],
     "deny": [
       "Bash(rm ~/)",
