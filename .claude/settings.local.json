@@ -48,7 +48,10 @@
       "Bash(npm run:*)",
       "Bash(git commit:*)",
       "Bash(del \"C:\\\\Users\\\\viet-cuong.SYSTEM-EXE\\\\Desktop\\\\personal\\\\angular-ui-template\\\\src\\\\app\\\\features\\\\uikit\\\\components\\\\tabledemo.ts\")",
-      "Bash(tree:*)"
+      "Bash(tree:*)",
+      "Bash(timeout:*)",
+      "Bash(ng test:*)",
+      "Bash(ng build)"
     ],
     "deny": [
       "Bash(rm ~/)",
