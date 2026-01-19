@@ -4,6 +4,7 @@ import { CommonModule } from '@angular/common';
 import { StyleClassModule } from 'primeng/styleclass';
 import { TranslocoModule } from '@jsverse/transloco';
 import { AppConfigurator } from './app.configurator';
+import { LanguageSwitcherComponent } from './language-switcher.component';
 import { LayoutService } from '../services/layout.service';
 import { LogoComponent } from '@shared/components';
 
@@ -11,7 +12,7 @@ import { LogoComponent } from '@shared/components';
     selector: 'app-topbar',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterModule, CommonModule, StyleClassModule, TranslocoModule, AppConfigurator, LogoComponent],
+    imports: [RouterModule, CommonModule, StyleClassModule, TranslocoModule, AppConfigurator, LanguageSwitcherComponent, LogoComponent],
     template: ` <div class="layout-topbar">
         <div class="layout-topbar-logo-container">
             <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
@@ -25,6 +26,10 @@ import { LogoComponent } from '@shared/components';
 
         <div class="layout-topbar-actions">
             <div class="layout-config-menu">
+                <!-- Language Switcher -->
+                <app-language-switcher />
+
+                <!-- Dark Mode Toggle -->
                 <button type="button" class="layout-topbar-action" (click)="toggleDarkMode()">
                     <i [ngClass]="{ 'pi ': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
                 </button>

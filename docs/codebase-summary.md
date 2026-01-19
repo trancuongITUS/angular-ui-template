@@ -108,14 +108,16 @@ Configuration Files:
 - **app.config.ts** - App-wide constants
 - **constants.ts** - Global constants
 
-### Internationalization (`core/i18n/`)
+### Internationalization (`core/i18n/`) - Phase 4 UI Integration
 - **transloco-loader.ts** - HTTP loader for JSON translation files from assets
 - **language.service.ts** - Signal-based language state with localStorage persistence
   - `currentLang` signal - Tracks active language
   - `availableLanguages` - List of supported languages (en, vi)
   - Browser language detection and fallback to English
+  - `getCurrentLanguageInfo()` - Returns language object with flag emoji
 - **transloco.config.ts** - Transloco configuration provider with dev/prod modes
 - **index.ts** - Barrel export
+- **UI Integration**: Language-switcher component in topbar uses LanguageService
 
 ### HTTP Layer (`core/http/`)
 - **base-http.service.ts** - Generic HTTP methods
@@ -204,12 +206,17 @@ Configuration Files:
 
 ### Components (`layout/components/`)
 - **app.layout.ts** - Root layout container (sidebar + topbar + content + footer)
-- **topbar.component.ts** - Top navigation bar
+- **topbar.component.ts** - Top navigation bar with language switcher and dark mode toggle
 - **app-sidebar.component.ts** - Left sidebar with menu
 - **menu.component.ts** - Recursive menu items
 - **footer.component.ts** - Footer with links
 - **configurator.component.ts** - Theme/layout customizer
 - **profile-menu.component.ts** - User profile dropdown
+- **language-switcher.component.ts** - Language selector with PrimeNG Select (Phase 4 UI)
+  - Displays flag emoji + language name
+  - Integrates with LanguageService for language switching
+  - Mobile responsive (hides language name on mobile)
+  - Uses signal-based reactive state
 
 ### Services (`layout/services/`)
 - **layout.service.ts** - Signal-based layout state (menu visibility, theme)
