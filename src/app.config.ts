@@ -5,6 +5,7 @@ import { provideRouter, withEnabledBlockingInitialNavigation, withInMemoryScroll
 import { apiInterceptor } from '@core/interceptors';
 import { authInterceptor, errorInterceptor, loadingInterceptor } from '@core/auth';
 import { GlobalErrorHandler } from '@core/errors';
+import { provideTranslocoConfig } from '@core/i18n';
 import { MessageService, ConfirmationService } from 'primeng/api';
 import Aura from '@primeuix/themes/aura';
 import { providePrimeNG } from 'primeng/config';
@@ -28,6 +29,8 @@ export const appConfig: ApplicationConfig = {
         ),
         provideAnimationsAsync(),
         providePrimeNG({ theme: { preset: Aura, options: { darkModeSelector: '.app-dark' } } }),
+        // i18n configuration with Transloco
+        provideTranslocoConfig(),
         // Global error handler for uncaught errors
         { provide: ErrorHandler, useClass: GlobalErrorHandler },
         // PrimeNG services for toast notifications and confirmations

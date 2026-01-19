@@ -63,6 +63,26 @@ CoreModule
 │   ├── app.config.ts - App configuration
 │   └── constants.ts - Global constants
 │
+├── Internationalization Subsystem (Phase 1)
+│   ├── LanguageService - Signal-based language state
+│   │   ├── currentLang signal - Active language tracking
+│   │   ├── availableLanguages - Supported languages (en, vi)
+│   │   ├── setLanguage() - Change active language
+│   │   ├── getInitialLanguage() - Detect browser/saved preference
+│   │   └── localStorage persistence
+│   │
+│   ├── TranslocoHttpLoader - Load translations from assets
+│   │   └── Fetches /assets/i18n/{lang}.json
+│   │
+│   ├── provideTranslocoConfig - DI configuration
+│   │   ├── availableLangs: ['en', 'vi']
+│   │   ├── defaultLang: 'en'
+│   │   ├── fallbackLang: 'en'
+│   │   └── Missing key handling
+│   │
+│   └── Translation Files
+│       └── /assets/i18n/{en,vi}.json - Language-specific strings
+│
 ├── HTTP Subsystem
 │   ├── BaseHttpService - Generic HTTP methods
 │   ├── apiInterceptor - Base URL injection

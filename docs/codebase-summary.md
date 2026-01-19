@@ -13,6 +13,7 @@ src/
 │   │   ├── config/                # Application & API configuration
 │   │   ├── errors/                # Global error handling
 │   │   ├── http/                  # HTTP client & interceptors
+│   │   ├── i18n/                  # Internationalization (Transloco) - Phase 1
 │   │   ├── interceptors/          # HTTP request/response interceptors
 │   │   ├── services/              # Core business services
 │   │   └── store/                 # NgRx Signals state management
@@ -106,6 +107,15 @@ Configuration Files:
 - **api.config.ts** - API endpoint definitions
 - **app.config.ts** - App-wide constants
 - **constants.ts** - Global constants
+
+### Internationalization (`core/i18n/`)
+- **transloco-loader.ts** - HTTP loader for JSON translation files from assets
+- **language.service.ts** - Signal-based language state with localStorage persistence
+  - `currentLang` signal - Tracks active language
+  - `availableLanguages` - List of supported languages (en, vi)
+  - Browser language detection and fallback to English
+- **transloco.config.ts** - Transloco configuration provider with dev/prod modes
+- **index.ts** - Barrel export
 
 ### HTTP Layer (`core/http/`)
 - **base-http.service.ts** - Generic HTTP methods
