@@ -5,12 +5,13 @@ import { ButtonModule } from 'primeng/button';
 import { CommonModule } from '@angular/common';
 import { TranslocoModule } from '@jsverse/transloco';
 import { Product, ProductService } from '@core/services/data/product.service';
+import { LocalizedCurrencyPipe } from '@shared/pipes';
 
 @Component({
     standalone: true,
     selector: 'app-recent-sales-widget',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, TableModule, ButtonModule, RippleModule, TranslocoModule],
+    imports: [CommonModule, TableModule, ButtonModule, RippleModule, TranslocoModule, LocalizedCurrencyPipe],
     template: `<div class="card mb-8!">
         <div class="font-semibold text-xl mb-4">{{ 'dashboard.recentSales' | transloco }}</div>
         <p-table [value]="products()" [paginator]="true" [rows]="5" [rowTrackBy]="trackByProductId" responsiveLayout="scroll">
@@ -28,7 +29,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
                         <img src="https://primefaces.org/cdn/primevue/images/product/{{ product.image }}" class="shadow-lg" alt="{{ product.name }}" width="50" />
                     </td>
                     <td style="width: 35%; min-width: 7rem;">{{ product.name }}</td>
-                    <td style="width: 35%; min-width: 8rem;">{{ product.price | currency: 'USD' }}</td>
+                    <td style="width: 35%; min-width: 8rem;">{{ product.price | localizedCurrency }}</td>
                     <td style="width: 15%;">
                         <button pButton pRipple type="button" icon="pi pi-search" class="p-button p-component p-button-text p-button-icon-only" aria-label="View product details"></button>
                     </td>

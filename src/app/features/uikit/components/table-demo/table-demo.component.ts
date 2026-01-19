@@ -21,6 +21,7 @@ import { Product, ProductService } from '@core/services/data/product.service';
 import { ObjectUtils } from 'primeng/utils';
 import { TABLE_DEMO_REPRESENTATIVES, TABLE_DEMO_STATUSES } from './table-demo.data';
 import { getTableDemoSeverity, formatTableDemoCurrency } from './table-demo.helpers';
+import { LocalizedCurrencyPipe, LocalizedDatePipe } from '@shared/pipes';
 
 interface ExpandedRows {
     [key: string]: boolean;
@@ -46,7 +47,9 @@ interface ExpandedRows {
         ButtonModule,
         RatingModule,
         RippleModule,
-        IconFieldModule
+        IconFieldModule,
+        LocalizedCurrencyPipe,
+        LocalizedDatePipe
     ],
     templateUrl: './table-demo.component.html',
     styles: `

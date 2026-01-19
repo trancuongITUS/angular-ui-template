@@ -6,11 +6,13 @@ export interface Language {
     code: string;
     name: string;
     flag: string;
+    locale: string;
+    currency: string;
 }
 
 export const AVAILABLE_LANGUAGES: Language[] = [
-    { code: 'en', name: 'English', flag: '🇺🇸' },
-    { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳' }
+    { code: 'en', name: 'English', flag: '🇺🇸', locale: 'en-US', currency: 'USD' },
+    { code: 'vi', name: 'Tiếng Việt', flag: '🇻🇳', locale: 'vi-VN', currency: 'VND' }
 ];
 
 const STORAGE_KEY = 'app-language';
@@ -71,5 +73,17 @@ export class LanguageService {
     /** Check if language code is valid */
     private isValidLanguage(code: string): boolean {
         return this.availableLanguages.some((l) => l.code === code);
+    }
+
+    /** Get locale for current language */
+    getCurrentLocale(): string {
+        const lang = this.getCurrentLanguageInfo();
+        return lang?.locale || 'en-US';
+    }
+
+    /** Get currency code for current language */
+    getCurrentCurrency(): string {
+        const lang = this.getCurrentLanguageInfo();
+        return lang?.currency || 'USD';
     }
 }

@@ -18,3 +18,7 @@ export * from './slug.pipe';
 export * from './file-size.pipe';
 export * from './percentage.pipe';
 export * from './number-format.pipe';
+
+// Localized pipes (i18n-aware)
+export * from './localized-date.pipe';
+export * from './localized-currency.pipe';

@@ -23,6 +23,7 @@ import { Subscription } from 'rxjs';
 import { Product, ProductService } from '@core/services/data/product.service';
 import { InventoryStatus, INVENTORY_STATUSES } from '@shared/models';
 import { CrudColumn, CrudExportColumn, CRUD_TABLE_COLUMNS, createExportColumns, getCrudSeverity, createProductId } from './crud.helpers';
+import { LocalizedCurrencyPipe } from '@shared/pipes';
 
 @Component({
     selector: 'app-crud',
@@ -47,7 +48,8 @@ import { CrudColumn, CrudExportColumn, CRUD_TABLE_COLUMNS, createExportColumns, 
         InputIconModule,
         IconFieldModule,
         ConfirmDialogModule,
-        TranslocoModule
+        TranslocoModule,
+        LocalizedCurrencyPipe
     ],
     templateUrl: './crud.component.html',
     providers: [MessageService, ProductService, ConfirmationService]
