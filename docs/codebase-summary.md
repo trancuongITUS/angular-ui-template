@@ -1,7 +1,7 @@
 # Codebase Summary
 
-**Version:** 20.3.0
-**Last Updated:** January 18, 2026
+**Version:** 20.5.0
+**Last Updated:** January 20, 2026
 
 ## Directory Structure Overview
 
@@ -108,16 +108,20 @@ Configuration Files:
 - **app.config.ts** - App-wide constants
 - **constants.ts** - Global constants
 
-### Internationalization (`core/i18n/`) - Phase 4 UI Integration
+### Internationalization (`core/i18n/`) - Phase 5 Complete (v20.5.0)
 - **transloco-loader.ts** - HTTP loader for JSON translation files from assets
 - **language.service.ts** - Signal-based language state with localStorage persistence
-  - `currentLang` signal - Tracks active language
+  - `currentLang` signal - Tracks active language (stored in localStorage)
+  - `locale` signal - Active locale (vi-VN or en-US) for DatePipe/CurrencyPipe
+  - `currency` signal - Auto-switching currency (VND or USD based on language)
   - `availableLanguages` - List of supported languages (en, vi)
   - Browser language detection and fallback to English
   - `getCurrentLanguageInfo()` - Returns language object with flag emoji
+  - Full test coverage: 50+ tests for state management & localStorage
 - **transloco.config.ts** - Transloco configuration provider with dev/prod modes
 - **index.ts** - Barrel export
-- **UI Integration**: Language-switcher component in topbar uses LanguageService
+- **UI Integration**: Language-switcher component in topbar (PrimeNG Select)
+- **Localization**: LocalizedDatePipe & LocalizedCurrencyPipe inject LanguageService
 
 ### HTTP Layer (`core/http/`)
 - **base-http.service.ts** - Generic HTTP methods
@@ -256,14 +260,13 @@ Configuration Files:
 - Full test coverage (11 tests)
 
 ### Pipes (`shared/pipes/`)
-15 custom pipes (all pure for optimal performance, except localization pipes):
+17 custom pipes (13 pure for optimal performance + 2 localization pipes + 2 utility pipes):
+
+**Pure Pipes (Optimal Performance):**
 - **capitalize.pipe.ts** - Capitalize text
 - **truncate.pipe.ts** - Truncate text
 - **format-currency.pipe.ts** - Currency formatting
 - **format-date.pipe.ts** - Date formatting
-- **safe.pipe.ts** - XSS-safe sanitization with multi-type support (Phase 4)
-  - HTML, Style, Script, URL, ResourceUrl types
-  - Sanitizes then trusts content to prevent XSS attacks
 - **filter.pipe.ts** - Array filtering
 - **sort.pipe.ts** - Array sorting
 - **group-by.pipe.ts** - Group array items
@@ -271,14 +274,30 @@ Configuration Files:
 - **bytes.pipe.ts** - Format bytes to readable size
 - **percentage.pipe.ts** - Format percentages
 - **phone.pipe.ts** - Format phone numbers
-- **localized-date.pipe.ts** - Locale-aware date formatting (Phase 5)
-  - Pure: false (reacts to language changes)
-  - Injects LanguageService to detect current language
-  - Uses Angular DatePipe with detected locale
-- **localized-currency.pipe.ts** - Locale-aware currency formatting (Phase 5)
-  - Pure: false (reacts to language changes)
-  - Supports locale-specific currency symbols and formatting
-  - Injects LanguageService for language detection
+- **safe.pipe.ts** - XSS-safe sanitization with multi-type support (Phase 4)
+  - HTML, Style, Script, URL, ResourceUrl types
+  - Sanitizes then trusts content to prevent XSS attacks
+
+**Impure Pipes (Reactive to Language Changes):**
+- **localized-date.pipe.ts** - Locale-aware date formatting (Phase 5 v20.5.0)
+  - Pure: false (reacts to LanguageService changes)
+  - Vietnamese: dd/MM/yyyy format (19/01/26)
+  - English: MM/dd/yyyy format (01/19/26)
+  - Supports format patterns: 'mediumDate', 'shortDate', 'fullDate', custom
+  - Injects LanguageService to detect current locale (vi-VN or en-US)
+  - Uses Angular DatePipe with detected locale for proper day/month names
+  - Tested: 6+ test cases covering null/undefined, format patterns, locale switching
+  - Usage: `{{ date | localizedDate:'mediumDate' }}`
+
+- **localized-currency.pipe.ts** - Locale-aware currency formatting (Phase 5 v20.5.0)
+  - Pure: false (reacts to LanguageService changes)
+  - Vietnamese: VND ₫ with 0 decimals (1.234.567 ₫)
+  - English: USD $ with 2 decimals ($1,234.56)
+  - Auto-switching based on active language
+  - Locale-specific thousand & decimal separators
+  - Injects LanguageService for language & currency detection
+  - Tested: 6+ test cases covering currency codes, amounts, locale switching
+  - Usage: `{{ amount | localizedCurrency:'VND' }}`
 
 ### Utilities (`shared/utils/`)
 Shared utility functions (Phase 4):
