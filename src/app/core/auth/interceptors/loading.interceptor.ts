@@ -10,8 +10,11 @@ import { LoadingService } from '../services/loading.service';
 export const loadingInterceptor: HttpInterceptorFn = (req, next) => {
     const loadingService = inject(LoadingService);
 
-    // Skip loading indicator for specific endpoints (optional)
-    const skipLoading = req.headers.has('X-Skip-Loading') || req.url.includes('/auth/refresh'); // Don't show loading for token refresh
+    // Skip loading indicator for specific endpoints
+    const skipLoading =
+        req.headers.has('X-Skip-Loading') ||
+        req.url.includes('/auth/refresh') || // Don't show loading for token refresh
+        req.url.includes('/i18n/'); // Don't show loading for translation files (prevents NG0600 during initial render)
 
     if (skipLoading) {
         return next(req);

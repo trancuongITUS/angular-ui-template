@@ -22,11 +22,11 @@ const DEFAULT_LANG = 'en';
 export class LanguageService {
     private translocoService = inject(TranslocoService);
 
+    /** Available languages for the switcher - must be initialized before currentLang */
+    readonly availableLanguages = AVAILABLE_LANGUAGES;
+
     /** Current active language code */
     currentLang = signal<string>(this.getInitialLanguage());
-
-    /** Available languages for the switcher */
-    readonly availableLanguages = AVAILABLE_LANGUAGES;
 
     constructor() {
         // Initialize Transloco with detected language

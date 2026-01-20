@@ -9,6 +9,11 @@ import { EnvironmentService } from '@core/services';
 export const apiInterceptor: HttpInterceptorFn = (req, next) => {
     const envService = inject(EnvironmentService);
 
+    // Skip interception for local assets (i18n, images, etc.)
+    if (req.url.startsWith('/assets/') || req.url.startsWith('assets/')) {
+        return next(req);
+    }
+
     // Only modify the request if it's a relative URL
     if (!req.url.startsWith('http://') && !req.url.startsWith('https://')) {
         const apiUrl = envService.apiUrl;

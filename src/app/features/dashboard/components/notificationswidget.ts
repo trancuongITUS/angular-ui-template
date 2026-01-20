@@ -1,25 +1,25 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
-import { TranslocoService } from '@jsverse/transloco';
-import { Subscription } from 'rxjs';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { Subscription, switchMap } from 'rxjs';
 import { MenuItem } from 'primeng/api';
 
 @Component({
     standalone: true,
     selector: 'app-notifications-widget',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [ButtonModule, MenuModule],
+    imports: [ButtonModule, MenuModule, TranslocoModule],
     template: `<div class="card">
         <div class="flex items-center justify-between mb-6">
-            <div class="font-semibold text-xl">{{ title }}</div>
+            <div class="font-semibold text-xl">{{ 'dashboard.notifications' | transloco }}</div>
             <div>
                 <button pButton type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
                 <p-menu #menu [popup]="true" [model]="items"></p-menu>
             </div>
         </div>
 
-        <span class="block text-muted-color font-medium mb-4">{{ today }}</span>
+        <span class="block text-muted-color font-medium mb-4">{{ 'dashboard.today' | transloco }}</span>
         <ul class="p-0 mx-0 mt-0 mb-6 list-none">
             <li class="flex items-center py-2 border-b border-surface">
                 <div class="w-12 h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-full mr-4 shrink-0">
@@ -38,7 +38,7 @@ import { MenuItem } from 'primeng/api';
             </li>
         </ul>
 
-        <span class="block text-muted-color font-medium mb-4">{{ yesterday }}</span>
+        <span class="block text-muted-color font-medium mb-4">{{ 'dashboard.yesterday' | transloco }}</span>
         <ul class="p-0 m-0 list-none mb-6">
             <li class="flex items-center py-2 border-b border-surface">
                 <div class="w-12 h-12 flex items-center justify-center bg-blue-100 dark:bg-blue-400/10 rounded-full mr-4 shrink-0">
@@ -59,7 +59,7 @@ import { MenuItem } from 'primeng/api';
                 </span>
             </li>
         </ul>
-        <span class="block text-muted-color font-medium mb-4">{{ lastWeek }}</span>
+        <span class="block text-muted-color font-medium mb-4">{{ 'dashboard.lastWeek' | transloco }}</span>
         <ul class="p-0 m-0 list-none">
             <li class="flex items-center py-2 border-b border-surface">
                 <div class="w-12 h-12 flex items-center justify-center bg-green-100 dark:bg-green-400/10 rounded-full mr-4 shrink-0">
@@ -78,34 +78,28 @@ import { MenuItem } from 'primeng/api';
 })
 export class NotificationsWidget implements OnInit, OnDestroy {
     private readonly translocoService = inject(TranslocoService);
+    private readonly cdr = inject(ChangeDetectorRef);
     private langSubscription?: Subscription;
 
-    title = '';
-    today = '';
-    yesterday = '';
-    lastWeek = '';
     items: MenuItem[] = [];
 
     ngOnInit() {
-        this.updateTranslations();
-        this.langSubscription = this.translocoService.langChanges$.subscribe(() => {
-            this.updateTranslations();
-        });
+        this.langSubscription = this.translocoService.langChanges$
+            .pipe(switchMap((lang) => this.translocoService.selectTranslateObject('dashboard', {}, lang)))
+            .subscribe((dashboardTranslations) => {
+                this.updateTranslations(dashboardTranslations);
+                this.cdr.markForCheck(); // Trigger change detection for OnPush
+            });
     }
 
     ngOnDestroy() {
         this.langSubscription?.unsubscribe();
     }
 
-    private updateTranslations() {
-        const t = (key: string) => this.translocoService.translate(key);
-        this.title = t('dashboard.notifications');
-        this.today = t('dashboard.today');
-        this.yesterday = t('dashboard.yesterday');
-        this.lastWeek = t('dashboard.lastWeek');
+    private updateTranslations(t: Record<string, string>) {
         this.items = [
-            { label: t('dashboard.addNew'), icon: 'pi pi-fw pi-plus' },
-            { label: t('dashboard.remove'), icon: 'pi pi-fw pi-trash' }
+            { label: t['addNew'], icon: 'pi pi-fw pi-plus' },
+            { label: t['remove'], icon: 'pi pi-fw pi-trash' }
         ];
     }
 }

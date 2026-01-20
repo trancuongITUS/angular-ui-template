@@ -1,19 +1,19 @@
-import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit, OnDestroy, inject, ChangeDetectorRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
-import { TranslocoService } from '@jsverse/transloco';
-import { Subscription } from 'rxjs';
+import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
+import { Subscription, switchMap } from 'rxjs';
 import { MenuItem } from 'primeng/api';
 
 @Component({
     standalone: true,
     selector: 'app-best-selling-widget',
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [CommonModule, ButtonModule, MenuModule],
+    imports: [CommonModule, ButtonModule, MenuModule, TranslocoModule],
     template: ` <div class="card">
         <div class="flex justify-between items-center mb-6">
-            <div class="font-semibold text-xl">{{ title }}</div>
+            <div class="font-semibold text-xl">{{ 'dashboard.bestSellers' | transloco }}</div>
             <div>
                 <button pButton type="button" icon="pi pi-ellipsis-v" class="p-button-rounded p-button-text p-button-plain" (click)="menu.toggle($event)"></button>
                 <p-menu #menu [popup]="true" [model]="items"></p-menu>
@@ -97,29 +97,31 @@ import { MenuItem } from 'primeng/api';
 })
 export class BestSellingWidget implements OnInit, OnDestroy {
     private readonly translocoService = inject(TranslocoService);
+    private readonly cdr = inject(ChangeDetectorRef);
     private langSubscription?: Subscription;
 
     menu = null;
-    title = '';
     items: MenuItem[] = [];
 
     ngOnInit() {
-        this.updateTranslations();
-        this.langSubscription = this.translocoService.langChanges$.subscribe(() => {
-            this.updateTranslations();
-        });
+        // Use selectTranslateObject to wait for translations to be loaded
+        // This emits only when translations are ready, then re-emits on language change
+        this.langSubscription = this.translocoService.langChanges$
+            .pipe(switchMap((lang) => this.translocoService.selectTranslateObject('dashboard', {}, lang)))
+            .subscribe((menuTranslations) => {
+                this.updateTranslations(menuTranslations);
+                this.cdr.markForCheck(); // Trigger change detection for OnPush
+            });
     }
 
     ngOnDestroy() {
         this.langSubscription?.unsubscribe();
     }
 
-    private updateTranslations() {
-        const t = (key: string) => this.translocoService.translate(key);
-        this.title = t('dashboard.bestSellers');
+    private updateTranslations(t: Record<string, string>) {
         this.items = [
-            { label: t('dashboard.addNew'), icon: 'pi pi-fw pi-plus' },
-            { label: t('dashboard.remove'), icon: 'pi pi-fw pi-trash' }
+            { label: t['addNew'], icon: 'pi pi-fw pi-plus' },
+            { label: t['remove'], icon: 'pi pi-fw pi-trash' }
         ];
     }
 }

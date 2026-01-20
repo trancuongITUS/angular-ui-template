@@ -1,7 +1,7 @@
-import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnDestroy, OnInit, signal, inject, ChangeDetectorRef } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 import { TranslocoModule, TranslocoService } from '@jsverse/transloco';
-import { debounceTime, Subscription } from 'rxjs';
+import { debounceTime, Subscription, switchMap } from 'rxjs';
 import { LayoutService } from '@layout/services/layout.service';
 
 @Component({
@@ -16,7 +16,7 @@ import { LayoutService } from '@layout/services/layout.service';
 })
 export class RevenueStreamWidget implements OnInit, OnDestroy {
     private readonly translocoService = inject(TranslocoService);
-
+    private readonly cdr = inject(ChangeDetectorRef);
     chartData = signal<any>(null);
 
     chartOptions = signal<any>(null);
@@ -26,44 +26,45 @@ export class RevenueStreamWidget implements OnInit, OnDestroy {
 
     constructor(public layoutService: LayoutService) {
         this.subscription = this.layoutService.configUpdate$.pipe(debounceTime(25)).subscribe(() => {
-            this.initChart();
+            this.initChart({});
         });
     }
 
     ngOnInit() {
-        this.initChart();
-        this.langSubscription = this.translocoService.langChanges$.subscribe(() => {
-            this.initChart();
-        });
+        this.langSubscription = this.translocoService.langChanges$
+            .pipe(switchMap((lang) => this.translocoService.selectTranslateObject('dashboard', {}, lang)))
+            .subscribe((dashboardTranslations) => {
+                this.initChart(dashboardTranslations);
+                this.cdr.markForCheck(); // Trigger change detection for OnPush
+            });
     }
 
-    initChart() {
+    initChart(t: Record<string, string>) {
         const documentStyle = getComputedStyle(document.documentElement);
         const textColor = documentStyle.getPropertyValue('--text-color');
         const borderColor = documentStyle.getPropertyValue('--surface-border');
         const textMutedColor = documentStyle.getPropertyValue('--text-color-secondary');
-        const t = (key: string) => this.translocoService.translate(key);
 
         this.chartData.set({
             labels: ['Q1', 'Q2', 'Q3', 'Q4'],
             datasets: [
                 {
                     type: 'bar',
-                    label: t('dashboard.subscriptions'),
+                    label: t['subscriptions'] || 'Subscriptions',
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-400'),
                     data: [4000, 10000, 15000, 4000],
                     barThickness: 32
                 },
                 {
                     type: 'bar',
-                    label: t('dashboard.advertising'),
+                    label: t['advertising'] || 'Advertising',
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-300'),
                     data: [2100, 8400, 2400, 7500],
                     barThickness: 32
                 },
                 {
                     type: 'bar',
-                    label: t('dashboard.affiliate'),
+                    label: t['affiliate'] || 'Affiliate',
                     backgroundColor: documentStyle.getPropertyValue('--p-primary-200'),
                     data: [4100, 5200, 3400, 7400],
                     borderRadius: {

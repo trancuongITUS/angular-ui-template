@@ -51,7 +51,10 @@
       "Bash(tree:*)",
       "Bash(timeout:*)",
       "Bash(ng test:*)",
-      "Bash(ng build)"
+      "Bash(ng build)",
+      "Bash(git status:*)",
+      "Skill(brainstorming)",
+      "Bash(npm audit:*)"
     ],
     "deny": [
       "Bash(rm ~/)",
