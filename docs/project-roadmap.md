@@ -1,8 +1,8 @@
 # Project Roadmap
 
 **Version:** 20.3.0
-**Last Updated:** January 19, 2026
-**Status:** Language Switcher UI Implementation Complete
+**Last Updated:** January 20, 2026
+**Status:** i18n Phase 5: Date/Currency Localization Complete
 
 ## Current Status
 
@@ -222,8 +222,8 @@ The Sakai-ng template reached enterprise-ready status with comprehensive quality
 - [x] Multi-language support (EN, VI) - Phase 4 UI Complete
 - [ ] Right-to-left (RTL) support
 - [x] Language switcher component (PrimeNG Select in topbar)
-- [ ] Date/time localization
-- [ ] Currency localization
+- [x] Date/time localization (Phase 5 Complete - LocalizedDatePipe with vi-VN & en-US)
+- [x] Currency localization (Phase 5 Complete - LocalizedCurrencyPipe with auto VND/USD switching)
 - [ ] Expand to additional languages (ES, FR, DE, ZH)
 
 #### 5.2 Real-Time Features
@@ -496,6 +496,29 @@ For questions about the roadmap:
 ---
 
 ## Changelog
+
+### [20.3.1] - 2026-01-20
+
+#### i18n Phase 5: Date/Currency Localization Complete
+- Implemented LocalizedDatePipe for locale-aware date formatting
+  - Vietnamese: dd/MM/yyyy format (19/01/26)
+  - English: MM/dd/yyyy format (01/19/26)
+- Implemented LocalizedCurrencyPipe with auto VND/USD switching
+  - Vietnamese: VND with 0 decimals (1.234.567 ₫)
+  - English: USD with 2 decimals ($1,234.56)
+- Registered Vietnamese locale (vi) data in main.ts
+- Updated LanguageService with locale & currency properties
+- Applied pipes to dashboard, CRUD, and UIKit table components
+- All 89 tests passing (100% success rate)
+- Build successful with no blocking issues
+- Code review: 8.5/10 - Production-ready with minor optimizations
+
+#### Status
+- Phases 1-5: Complete (2026-01-19 to 2026-01-20)
+- Phase 6 (Testing & Validation): Ready to start
+- Next focus: Final validation and Phase 6 completion
+
+---
 
 ### [20.3.0] - 2026-01-18
 

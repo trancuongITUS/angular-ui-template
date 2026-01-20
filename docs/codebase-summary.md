@@ -256,7 +256,7 @@ Configuration Files:
 - Full test coverage (11 tests)
 
 ### Pipes (`shared/pipes/`)
-13 custom pipes (all pure for optimal performance):
+15 custom pipes (all pure for optimal performance, except localization pipes):
 - **capitalize.pipe.ts** - Capitalize text
 - **truncate.pipe.ts** - Truncate text
 - **format-currency.pipe.ts** - Currency formatting
@@ -271,6 +271,14 @@ Configuration Files:
 - **bytes.pipe.ts** - Format bytes to readable size
 - **percentage.pipe.ts** - Format percentages
 - **phone.pipe.ts** - Format phone numbers
+- **localized-date.pipe.ts** - Locale-aware date formatting (Phase 5)
+  - Pure: false (reacts to language changes)
+  - Injects LanguageService to detect current language
+  - Uses Angular DatePipe with detected locale
+- **localized-currency.pipe.ts** - Locale-aware currency formatting (Phase 5)
+  - Pure: false (reacts to language changes)
+  - Supports locale-specific currency symbols and formatting
+  - Injects LanguageService for language detection
 
 ### Utilities (`shared/utils/`)
 Shared utility functions (Phase 4):
