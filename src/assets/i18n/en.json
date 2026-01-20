@@ -1,0 +1,223 @@
+{
+  "app": {
+    "name": "Sakai Angular Template"
+  },
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "add": "Add",
+    "close": "Close",
+    "search": "Search",
+    "filter": "Filter",
+    "clear": "Clear",
+    "submit": "Submit",
+    "confirm": "Confirm",
+    "yes": "Yes",
+    "no": "No",
+    "ok": "OK",
+    "loading": "Loading...",
+    "saving": "Saving...",
+    "processing": "Processing..."
+  },
+  "errors": {
+    "general": "An error occurred. Please try again.",
+    "network": "Network error. Please check your connection.",
+    "unauthorized": "Session expired. Please log in again.",
+    "notFound": "The requested resource was not found.",
+    "server": "Server error. Please try again later.",
+    "forbidden": "You do not have permission to perform this action."
+  },
+  "success": {
+    "saved": "Changes saved successfully.",
+    "deleted": "Item deleted successfully.",
+    "created": "Item created successfully.",
+    "updated": "Item updated successfully.",
+    "copied": "Copied to clipboard."
+  },
+  "validation": {
+    "required": "This field is required.",
+    "emailInvalid": "Please enter a valid email address.",
+    "passwordMin": "Password must be at least 8 characters.",
+    "passwordsMismatch": "Passwords do not match.",
+    "invalidFormat": "Invalid format. Please check your input."
+  },
+  "confirmation": {
+    "delete": "Are you sure you want to delete this item?",
+    "unsavedChanges": "You have unsaved changes. Are you sure you want to leave?",
+    "logout": "Are you sure you want to log out?"
+  },
+  "emptyState": {
+    "noData": "No data available.",
+    "noResults": "No results found.",
+    "noItems": "No items to display."
+  },
+  "menu": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "uiComponents": "UI Components",
+    "formLayout": "Form Layout",
+    "input": "Input",
+    "button": "Button",
+    "table": "Table",
+    "list": "List",
+    "tree": "Tree",
+    "panel": "Panel",
+    "overlay": "Overlay",
+    "media": "Media",
+    "menu": "Menu",
+    "message": "Message",
+    "file": "File",
+    "chart": "Chart",
+    "timeline": "Timeline",
+    "misc": "Misc",
+    "pages": "Pages",
+    "landing": "Landing",
+    "auth": "Auth",
+    "login": "Login",
+    "error": "Error",
+    "accessDenied": "Access Denied",
+    "crud": "Crud",
+    "notFound": "Not Found",
+    "empty": "Empty",
+    "hierarchy": "Hierarchy",
+    "submenu": "Submenu",
+    "getStarted": "Get Started",
+    "documentation": "Documentation",
+    "viewSource": "View Source"
+  },
+  "topbar": {
+    "calendar": "Calendar",
+    "messages": "Messages",
+    "profile": "Profile",
+    "language": "Language"
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "forgotPassword": "Forgot Password?",
+    "rememberMe": "Remember me",
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm Password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "noAccount": "Don't have an account?",
+    "hasAccount": "Already have an account?"
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "welcome": "Welcome back",
+    "overview": "Overview",
+    "recentSales": "Recent Sales",
+    "bestSellers": "Best Selling Products",
+    "revenue": "Revenue",
+    "revenueStream": "Revenue Stream",
+    "notifications": "Notifications",
+    "orders": "Orders",
+    "customers": "Customers",
+    "comments": "Comments",
+    "unread": "Unread",
+    "newSinceLastVisit": "new since last visit",
+    "sinceLastWeek": "since last week",
+    "newlyRegistered": "newly registered",
+    "responded": "responded",
+    "today": "TODAY",
+    "yesterday": "YESTERDAY",
+    "lastWeek": "LAST WEEK",
+    "addNew": "Add New",
+    "remove": "Remove",
+    "subscriptions": "Subscriptions",
+    "advertising": "Advertising",
+    "affiliate": "Affiliate"
+  },
+  "crud": {
+    "products": "Products",
+    "addProduct": "Add Product",
+    "editProduct": "Edit Product",
+    "deleteProduct": "Delete Product",
+    "deleteProducts": "Delete Products",
+    "productDetails": "Product Details",
+    "manageProducts": "Manage Products",
+    "name": "Name",
+    "nameRequired": "Name is required.",
+    "description": "Description",
+    "price": "Price",
+    "category": "Category",
+    "quantity": "Quantity",
+    "status": "Status",
+    "inventoryStatus": "Inventory Status",
+    "selectStatus": "Select a Status",
+    "inStock": "In Stock",
+    "lowStock": "Low Stock",
+    "outOfStock": "Out of Stock",
+    "code": "Code",
+    "image": "Image",
+    "reviews": "Reviews",
+    "new": "New",
+    "export": "Export",
+    "confirmDeleteSelected": "Are you sure you want to delete the selected products?",
+    "confirmDeleteProduct": "Are you sure you want to delete {{name}}?",
+    "productsDeleted": "Products Deleted",
+    "productDeleted": "Product Deleted",
+    "productUpdated": "Product Updated",
+    "productCreated": "Product Created",
+    "successful": "Successful",
+    "accessories": "Accessories",
+    "clothing": "Clothing",
+    "electronics": "Electronics",
+    "fitness": "Fitness"
+  },
+  "table": {
+    "showing": "Showing",
+    "of": "of",
+    "entries": "entries",
+    "previous": "Previous",
+    "next": "Next",
+    "noRecords": "No records found",
+    "view": "View"
+  },
+  "language": {
+    "en": "English",
+    "vi": "Tiếng Việt"
+  },
+  "pages": {
+    "login": {
+      "welcomeTitle": "Welcome to PrimeLand!",
+      "signInToContinue": "Sign in to continue",
+      "emailPlaceholder": "Email address",
+      "passwordPlaceholder": "Password",
+      "enterBothFields": "Please enter both email and password.",
+      "invalidEmail": "Please enter a valid email address.",
+      "passwordMinLength": "Password must be at least {{length}} characters.",
+      "loginFailed": "Login failed. Please check your credentials."
+    },
+    "accessDenied": {
+      "title": "Access Denied",
+      "message": "You do not have the necessary permissions. Please contact admins.",
+      "goToDashboard": "Go to Dashboard"
+    },
+    "error": {
+      "title": "Error Occurred",
+      "message": "Requested resource is not available.",
+      "goToDashboard": "Go to Dashboard"
+    },
+    "notFound": {
+      "title": "Not Found",
+      "code": "404",
+      "message": "Requested resource is not available.",
+      "faq": "Frequently Asked Questions",
+      "faqDesc": "Ultricies mi quis hendrerit dolor.",
+      "solutionCenter": "Solution Center",
+      "solutionCenterDesc": "Phasellus faucibus scelerisque eleifend.",
+      "permissionManager": "Permission Manager",
+      "permissionManagerDesc": "Accumsan in nisl nisi scelerisque",
+      "goToDashboard": "Go to Dashboard"
+    }
+  },
+  "footer": {
+    "by": "by"
+  }
+}

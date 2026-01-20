@@ -63,6 +63,36 @@ CoreModule
 │   ├── app.config.ts - App configuration
 │   └── constants.ts - Global constants
 │
+├── Internationalization Subsystem (Phase 1-5)
+│   ├── LanguageService - Signal-based language state
+│   │   ├── currentLang signal - Active language tracking
+│   │   ├── availableLanguages - Supported languages (en, vi)
+│   │   ├── setLanguage() - Change active language
+│   │   ├── getInitialLanguage() - Detect browser/saved preference
+│   │   ├── getCurrentLanguageInfo() - Returns language object with flag emoji
+│   │   └── localStorage persistence
+│   │
+│   ├── TranslocoHttpLoader - Load translations from assets
+│   │   └── Fetches /assets/i18n/{lang}.json
+│   │
+│   ├── provideTranslocoConfig - DI configuration
+│   │   ├── availableLangs: ['en', 'vi']
+│   │   ├── defaultLang: 'en'
+│   │   ├── fallbackLang: 'en'
+│   │   └── Missing key handling
+│   │
+│   ├── Localization Pipes (Phase 5)
+│   │   ├── LocalizedDatePipe - Locale-aware date formatting
+│   │   │   └── Injects LanguageService to detect current locale
+│   │   └── LocalizedCurrencyPipe - Locale-aware currency formatting
+│   │       └── Injects LanguageService to detect current locale
+│   │
+│   ├── Locale Registration (main.ts)
+│   │   └── registerLocaleData(viLocale) - Enables Vietnamese date/currency formatting
+│   │
+│   └── Translation Files
+│       └── /assets/i18n/{en,vi}.json - Language-specific strings
+│
 ├── HTTP Subsystem
 │   ├── BaseHttpService - Generic HTTP methods
 │   ├── apiInterceptor - Base URL injection
@@ -184,7 +214,7 @@ SharedModule
 │   ├── scroll-to.directive.ts - Smooth scrolling
 │   └── auto-focus.directive.ts - Auto-focus inputs
 │
-├── Pipes (13 custom)
+├── Pipes (15 custom)
 │   ├── capitalize.pipe.ts - Capitalize text
 │   ├── truncate.pipe.ts - Truncate strings
 │   ├── format-currency.pipe.ts - Currency formatting
@@ -197,7 +227,11 @@ SharedModule
 │   ├── get-initials.pipe.ts - Extract initials
 │   ├── bytes.pipe.ts - File size formatting
 │   ├── percentage.pipe.ts - Percentage formatting
-│   └── phone.pipe.ts - Phone number formatting
+│   ├── phone.pipe.ts - Phone number formatting
+│   ├── localized-date.pipe.ts - Locale-aware date formatting (Phase 5)
+│   │   └── Reacts to language changes, uses Angular DatePipe with current locale
+│   └── localized-currency.pipe.ts - Locale-aware currency formatting (Phase 5)
+│       └── Reacts to language changes, supports currency codes
 │
 └── Models & Types
     ├── component.model.ts - Component types

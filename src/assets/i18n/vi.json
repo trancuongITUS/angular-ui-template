@@ -1,0 +1,223 @@
+{
+  "app": {
+    "name": "Sakai Angular Template"
+  },
+  "common": {
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "edit": "Sửa",
+    "add": "Thêm",
+    "close": "Đóng",
+    "search": "Tìm kiếm",
+    "filter": "Lọc",
+    "clear": "Xóa",
+    "submit": "Gửi",
+    "confirm": "Xác nhận",
+    "yes": "Có",
+    "no": "Không",
+    "ok": "OK",
+    "loading": "Đang tải...",
+    "saving": "Đang lưu...",
+    "processing": "Đang xử lý..."
+  },
+  "errors": {
+    "general": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "network": "Lỗi mạng. Vui lòng kiểm tra kết nối.",
+    "unauthorized": "Phiên đã hết hạn. Vui lòng đăng nhập lại.",
+    "notFound": "Không tìm thấy tài nguyên yêu cầu.",
+    "server": "Lỗi máy chủ. Vui lòng thử lại sau.",
+    "forbidden": "Bạn không có quyền thực hiện hành động này."
+  },
+  "success": {
+    "saved": "Đã lưu thành công.",
+    "deleted": "Đã xóa thành công.",
+    "created": "Đã tạo thành công.",
+    "updated": "Đã cập nhật thành công.",
+    "copied": "Đã sao chép vào clipboard."
+  },
+  "validation": {
+    "required": "Trường này là bắt buộc.",
+    "emailInvalid": "Vui lòng nhập địa chỉ email hợp lệ.",
+    "passwordMin": "Mật khẩu phải có ít nhất 8 ký tự.",
+    "passwordsMismatch": "Mật khẩu không khớp.",
+    "invalidFormat": "Định dạng không hợp lệ. Vui lòng kiểm tra lại."
+  },
+  "confirmation": {
+    "delete": "Bạn có chắc chắn muốn xóa mục này?",
+    "unsavedChanges": "Bạn có thay đổi chưa lưu. Bạn có chắc muốn rời đi?",
+    "logout": "Bạn có chắc chắn muốn đăng xuất?"
+  },
+  "emptyState": {
+    "noData": "Không có dữ liệu.",
+    "noResults": "Không tìm thấy kết quả.",
+    "noItems": "Không có mục để hiển thị."
+  },
+  "menu": {
+    "home": "Trang chủ",
+    "dashboard": "Bảng điều khiển",
+    "uiComponents": "Thành phần UI",
+    "formLayout": "Bố cục Form",
+    "input": "Đầu vào",
+    "button": "Nút",
+    "table": "Bảng",
+    "list": "Danh sách",
+    "tree": "Cây",
+    "panel": "Bảng điều khiển",
+    "overlay": "Lớp phủ",
+    "media": "Đa phương tiện",
+    "menu": "Menu",
+    "message": "Tin nhắn",
+    "file": "Tệp",
+    "chart": "Biểu đồ",
+    "timeline": "Dòng thời gian",
+    "misc": "Khác",
+    "pages": "Trang",
+    "landing": "Trang đích",
+    "auth": "Xác thực",
+    "login": "Đăng nhập",
+    "error": "Lỗi",
+    "accessDenied": "Từ chối truy cập",
+    "crud": "CRUD",
+    "notFound": "Không tìm thấy",
+    "empty": "Trống",
+    "hierarchy": "Phân cấp",
+    "submenu": "Menu con",
+    "getStarted": "Bắt đầu",
+    "documentation": "Tài liệu",
+    "viewSource": "Xem mã nguồn"
+  },
+  "topbar": {
+    "calendar": "Lịch",
+    "messages": "Tin nhắn",
+    "profile": "Hồ sơ",
+    "language": "Ngôn ngữ"
+  },
+  "auth": {
+    "login": "Đăng nhập",
+    "register": "Đăng ký",
+    "logout": "Đăng xuất",
+    "forgotPassword": "Quên mật khẩu?",
+    "rememberMe": "Ghi nhớ đăng nhập",
+    "email": "Email",
+    "password": "Mật khẩu",
+    "confirmPassword": "Xác nhận mật khẩu",
+    "signIn": "Đăng nhập",
+    "signUp": "Đăng ký",
+    "noAccount": "Chưa có tài khoản?",
+    "hasAccount": "Đã có tài khoản?"
+  },
+  "dashboard": {
+    "title": "Bảng điều khiển",
+    "welcome": "Chào mừng trở lại",
+    "overview": "Tổng quan",
+    "recentSales": "Bán hàng gần đây",
+    "bestSellers": "Sản phẩm bán chạy",
+    "revenue": "Doanh thu",
+    "revenueStream": "Nguồn doanh thu",
+    "notifications": "Thông báo",
+    "orders": "Đơn hàng",
+    "customers": "Khách hàng",
+    "comments": "Bình luận",
+    "unread": "Chưa đọc",
+    "newSinceLastVisit": "mới từ lần truy cập cuối",
+    "sinceLastWeek": "từ tuần trước",
+    "newlyRegistered": "đăng ký mới",
+    "responded": "đã phản hồi",
+    "today": "HÔM NAY",
+    "yesterday": "HÔM QUA",
+    "lastWeek": "TUẦN TRƯỚC",
+    "addNew": "Thêm mới",
+    "remove": "Xóa",
+    "subscriptions": "Đăng ký",
+    "advertising": "Quảng cáo",
+    "affiliate": "Liên kết"
+  },
+  "crud": {
+    "products": "Sản phẩm",
+    "addProduct": "Thêm sản phẩm",
+    "editProduct": "Sửa sản phẩm",
+    "deleteProduct": "Xóa sản phẩm",
+    "deleteProducts": "Xóa sản phẩm",
+    "productDetails": "Chi tiết sản phẩm",
+    "manageProducts": "Quản lý sản phẩm",
+    "name": "Tên",
+    "nameRequired": "Tên là bắt buộc.",
+    "description": "Mô tả",
+    "price": "Giá",
+    "category": "Danh mục",
+    "quantity": "Số lượng",
+    "status": "Trạng thái",
+    "inventoryStatus": "Trạng thái kho",
+    "selectStatus": "Chọn trạng thái",
+    "inStock": "Còn hàng",
+    "lowStock": "Sắp hết",
+    "outOfStock": "Hết hàng",
+    "code": "Mã",
+    "image": "Hình ảnh",
+    "reviews": "Đánh giá",
+    "new": "Mới",
+    "export": "Xuất",
+    "confirmDeleteSelected": "Bạn có chắc chắn muốn xóa các sản phẩm đã chọn?",
+    "confirmDeleteProduct": "Bạn có chắc chắn muốn xóa {{name}}?",
+    "productsDeleted": "Đã xóa sản phẩm",
+    "productDeleted": "Đã xóa sản phẩm",
+    "productUpdated": "Đã cập nhật sản phẩm",
+    "productCreated": "Đã tạo sản phẩm",
+    "successful": "Thành công",
+    "accessories": "Phụ kiện",
+    "clothing": "Quần áo",
+    "electronics": "Điện tử",
+    "fitness": "Thể thao"
+  },
+  "table": {
+    "showing": "Hiển thị",
+    "of": "trong số",
+    "entries": "mục",
+    "previous": "Trước",
+    "next": "Sau",
+    "noRecords": "Không tìm thấy bản ghi",
+    "view": "Xem"
+  },
+  "language": {
+    "en": "English",
+    "vi": "Tiếng Việt"
+  },
+  "pages": {
+    "login": {
+      "welcomeTitle": "Chào mừng đến với PrimeLand!",
+      "signInToContinue": "Đăng nhập để tiếp tục",
+      "emailPlaceholder": "Địa chỉ email",
+      "passwordPlaceholder": "Mật khẩu",
+      "enterBothFields": "Vui lòng nhập cả email và mật khẩu.",
+      "invalidEmail": "Vui lòng nhập địa chỉ email hợp lệ.",
+      "passwordMinLength": "Mật khẩu phải có ít nhất {{length}} ký tự.",
+      "loginFailed": "Đăng nhập thất bại. Vui lòng kiểm tra thông tin đăng nhập."
+    },
+    "accessDenied": {
+      "title": "Từ chối truy cập",
+      "message": "Bạn không có quyền truy cập. Vui lòng liên hệ quản trị viên.",
+      "goToDashboard": "Về trang chủ"
+    },
+    "error": {
+      "title": "Đã xảy ra lỗi",
+      "message": "Tài nguyên yêu cầu không khả dụng.",
+      "goToDashboard": "Về trang chủ"
+    },
+    "notFound": {
+      "title": "Không tìm thấy",
+      "code": "404",
+      "message": "Tài nguyên yêu cầu không khả dụng.",
+      "faq": "Câu hỏi thường gặp",
+      "faqDesc": "Ultricies mi quis hendrerit dolor.",
+      "solutionCenter": "Trung tâm hỗ trợ",
+      "solutionCenterDesc": "Phasellus faucibus scelerisque eleifend.",
+      "permissionManager": "Quản lý quyền",
+      "permissionManagerDesc": "Accumsan in nisl nisi scelerisque",
+      "goToDashboard": "Về trang chủ"
+    }
+  },
+  "footer": {
+    "by": "bởi"
+  }
+}

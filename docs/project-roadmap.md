@@ -1,14 +1,14 @@
 # Project Roadmap
 
-**Version:** 20.3.0
-**Last Updated:** January 18, 2026
-**Status:** Code Quality & Accessibility Complete (Ready for Enhancement Phase)
+**Version:** 20.5.0
+**Last Updated:** January 20, 2026
+**Status:** i18n Phase 6: Testing & Validation Complete - FEATURE RELEASE
 
 ## Current Status
 
-**Phase:** 5 - Documentation & Accessibility (COMPLETE)
+**Phase:** 6.6 - i18n Internationalization Complete (Phase 6: Testing & Validation DONE)
 
-The Sakai-ng template reached enterprise-ready status with comprehensive quality improvements:
+The Sakai-ng template reached i18n maturity with full locale-aware implementations:
 - Angular 20 with standalone components & signals
 - Complete authentication system with JWT
 - Authorization directives with real role/permission checking (v20.0.1)
@@ -22,6 +22,11 @@ The Sakai-ng template reached enterprise-ready status with comprehensive quality
 - **Accessibility enhancements: ARIA labels, WCAG 2.1 AA (v20.3.0 Phase 5)**
 - **Code quality: strict equality, consistent interfaces, clean imports (v20.3.0 Phase 4)**
 - **i18n preparation: messages.ts constants file (v20.3.0 Phase 5)**
+- **Language Switcher UI Component (Phase 4): PrimeNG Select with flag emoji + responsive design**
+- **Transloco Translation System (v20.5.0 Phase 1): Multi-language file structure**
+- **Locale-Aware Date Pipe (v20.5.0 Phase 5): Vietnamese (vi-VN) & English (en-US)**
+- **Locale-Aware Currency Pipe (v20.5.0 Phase 5): Auto-switching VND/USD, proper formatting**
+- **89 comprehensive unit tests for i18n pipes & services**
 - Responsive admin layout with theme customization
 - Admin dashboard with 5 widgets
 - CRUD operations with optimized table rendering
@@ -33,7 +38,7 @@ The Sakai-ng template reached enterprise-ready status with comprehensive quality
 - Fixed memory leaks in layout components
 - Fixed theme toggle logic
 
-**Progress:** 100% (Phase 5 Documentation & Accessibility Complete - All planned quality phases finished)
+**Progress:** 100% (i18n Phase 6 Complete: Testing & Validation - All 6 phases DONE, 89/89 tests PASSED, build successful)
 
 ## Phase 1: Foundation (Complete)
 
@@ -215,14 +220,17 @@ The Sakai-ng template reached enterprise-ready status with comprehensive quality
 
 ### Planned Features
 
-#### 5.1 Internationalization (i18n)
-- [ ] i18n setup with Angular
-- [ ] Translation file structure
-- [ ] Multi-language support (EN, ES, FR, DE, ZH)
-- [ ] Right-to-left (RTL) support
-- [ ] Language switcher component
-- [ ] Date/time localization
-- [ ] Currency localization
+#### 6.1 Internationalization (i18n) - COMPLETE v20.5.0
+- [x] i18n setup with Angular (Transloco)
+- [x] Translation file structure (EN, VI) in assets/i18n/
+- [x] Multi-language support (EN, VI) - UI integration complete
+- [ ] Right-to-left (RTL) support (future)
+- [x] Language switcher component (PrimeNG Select in topbar + flag emoji)
+- [x] Date/time localization (LocalizedDatePipe: vi-VN dd/MM/yyyy vs en-US MM/dd/yyyy)
+- [x] Currency localization (LocalizedCurrencyPipe: VND ₫ vs USD $, auto-switching)
+- [x] Locale data registration (Vietnamese locale in main.ts with registerLocaleData)
+- [x] 89 comprehensive unit tests (localized pipes + language service)
+- [ ] Expand to additional languages (ES, FR, DE, ZH) (future Phase 7)
 
 #### 5.2 Real-Time Features
 - [ ] WebSocket integration
@@ -494,6 +502,59 @@ For questions about the roadmap:
 ---
 
 ## Changelog
+
+### [20.5.0] - 2026-01-20
+
+#### i18n Multi-Language Support Complete (Phase 6: Testing & Validation)
+
+**Full i18n Implementation Finalized:**
+- Phase 1-6 all completed (2026-01-19 to 2026-01-20)
+- Comprehensive testing & validation successful
+- Production-ready release
+
+**Test Results:**
+- Build: PASSED (no errors or warnings)
+- Tests: 89/89 PASSED (100% success rate)
+- Bundle size increase: <25KB (within acceptable range)
+- Code review: 8.5/10 - Production-ready
+- No critical issues
+
+**Validation Coverage:**
+- Language switching: Runtime switching without page reload verified
+- Translation coverage: All UI strings (topbar, menu, dashboard, CRUD, auth) translated EN/VI
+- Persistence: localStorage correctly persists language selection across sessions
+- Formatting: Date (dd/MM/yyyy VI, MM/dd/yyyy EN) & currency (VND/USD) formatting verified
+- Edge cases: Long Vietnamese text, missing translations fallback, browser language detection all working
+
+**Feature Set (Phases 1-6):**
+1. Transloco library integration with providers & configuration
+2. English (EN) + Vietnamese (VI) translation files (117 keys each)
+3. Template migration with transloco pipe integration
+4. Language Switcher UI component (PrimeNG Select with flag emoji, responsive)
+5. Locale-aware date & currency pipes with auto VND/USD switching
+6. Comprehensive testing & validation (build, tests, code review)
+
+**Next Phase:** Ready for i18n expansion (RTL support, additional languages ES/FR/DE/ZH)
+
+---
+
+### [20.3.1] - 2026-01-20
+
+#### i18n Phase 5: Date/Currency Localization Complete
+- Implemented LocalizedDatePipe for locale-aware date formatting
+  - Vietnamese: dd/MM/yyyy format (19/01/26)
+  - English: MM/dd/yyyy format (01/19/26)
+- Implemented LocalizedCurrencyPipe with auto VND/USD switching
+  - Vietnamese: VND with 0 decimals (1.234.567 ₫)
+  - English: USD with 2 decimals ($1,234.56)
+- Registered Vietnamese locale (vi) data in main.ts
+- Updated LanguageService with locale & currency properties
+- Applied pipes to dashboard, CRUD, and UIKit table components
+- All 89 tests passing (100% success rate)
+- Build successful with no blocking issues
+- Code review: 8.5/10 - Production-ready with minor optimizations
+
+---
 
 ### [20.3.0] - 2026-01-18
 

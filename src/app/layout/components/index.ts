@@ -7,3 +7,4 @@ export * from './app.menu';
 export * from './app.menuitem';
 export * from './app.configurator';
 export * from './app.floatingconfigurator';
+export * from './language-switcher.component';

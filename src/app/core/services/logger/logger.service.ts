@@ -11,7 +11,7 @@ import { LogContext, LogEntry, createLogEntry, formatLogMessage, getConsoleMetho
     providedIn: 'root'
 })
 export class LoggerService {
-    private readonly envService = inject(EnvironmentService);
+    private envService = inject(EnvironmentService);
     private context?: LogContext;
 
     /**
@@ -52,9 +52,11 @@ export class LoggerService {
 
     /**
      * Creates a new logger instance with specific context.
+     * Uses Object.create() to avoid triggering inject() outside Angular's DI context.
      */
     withContext(context: LogContext): LoggerService {
-        const logger = new LoggerService();
+        const logger = Object.create(LoggerService.prototype) as LoggerService;
+        logger.envService = this.envService;
         logger.context = { ...this.context, ...context };
         return logger;
     }

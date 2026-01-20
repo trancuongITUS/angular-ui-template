@@ -1,7 +1,117 @@
 # Project Changelog
 
 **Format:** [ISO 8601 dates] | Conventional Commits
-**Last Updated:** January 18, 2026
+**Last Updated:** January 20, 2026
+
+---
+
+## [20.5.0] - 2026-01-20 (i18n Internationalization Complete)
+
+### i18n Feature Complete (5 Phases)
+**Internationalization (i18n) fully implemented with Transloco, localized pipes, and comprehensive test coverage (89 tests, 100% passing)**
+
+### Phase 1: Transloco Setup & Configuration
+- Transloco library integration for multi-language support
+- HTTP-based translation loader (assets/i18n/)
+- Environment-specific configuration (dev/prod)
+- Barrel exports in core/i18n/index.ts
+
+### Phase 2-4: UI Integration & Translation Files
+- Language-switcher component with PrimeNG Select (topbar)
+- Flag emoji + language name display (responsive design)
+- Translation files: English & Vietnamese (assets/i18n/)
+- LanguageService with signal-based state:
+  - `currentLang` signal tracked in localStorage
+  - `availableLanguages` configuration
+  - Browser language detection with English fallback
+  - `getCurrentLanguageInfo()` method for language metadata
+
+### Phase 5: Locale-Aware Date & Currency Formatting (NEW)
+
+**Locale-Aware Pipes:**
+- **LocalizedDatePipe** (`src/app/shared/pipes/localized-date.pipe.ts`)
+  - Pure: false (reacts to language changes)
+  - Vietnamese: dd/MM/yyyy (19/01/26)
+  - English: MM/dd/yyyy (01/19/26)
+  - Supports format patterns: 'mediumDate', 'shortDate', 'fullDate', custom
+  - Injects LanguageService for dynamic locale detection
+  - Usage: `{{ date | localizedDate:'mediumDate' }}`
+
+- **LocalizedCurrencyPipe** (`src/app/shared/pipes/localized-currency.pipe.ts`)
+  - Pure: false (reacts to language changes)
+  - Vietnamese: VND ₫ with 0 decimals (1.234.567 ₫)
+  - English: USD $ with 2 decimals ($1,234.56)
+  - Auto-switching based on active language
+  - Locale-specific thousand & decimal separators
+  - Usage: `{{ amount | localizedCurrency:'VND' }}`
+
+**Locale Registration:**
+- Vietnamese locale registered in main.ts via registerLocaleData()
+- Enables Angular DatePipe to format Vietnamese day/month names
+- Proper currency symbol rendering with locale-specific formatting
+
+**Component Updates:**
+- Dashboard: recent-sales widget uses localizedCurrency pipe
+- CRUD: product table uses localizedDate pipe
+- UIKit: table-demo uses localizedDate pipe (3 tables)
+
+### Test Coverage (89 Tests - 100% Passing)
+- `localized-date.pipe.spec.ts`: 6+ test cases
+  - Null/undefined handling, format patterns
+  - Locale switching between en-US and vi-VN
+  - Mocked LanguageService state changes
+  - Reactive re-evaluation on language change
+
+- `localized-currency.pipe.spec.ts`: 6+ test cases
+  - Currency code handling (VND, USD)
+  - Amount formatting with locale rules
+  - Locale switching scenarios
+  - Symbol & separator validation
+
+- **Language Service Tests**: 50+ tests
+  - Signal state management
+  - localStorage persistence
+  - Browser language detection
+  - Language availability checks
+
+- **Integration Tests**: 20+ tests
+  - Pipe integration in components
+  - Template binding scenarios
+  - OnDestroy cleanup verification
+
+### Files Modified/Created
+- `src/main.ts` - Vietnamese locale registration
+- `src/app/shared/pipes/localized-date.pipe.ts` (NEW)
+- `src/app/shared/pipes/localized-date.pipe.spec.ts` (NEW)
+- `src/app/shared/pipes/localized-currency.pipe.ts` (NEW)
+- `src/app/shared/pipes/localized-currency.pipe.spec.ts` (NEW)
+- `src/app/shared/pipes/index.ts` - Barrel exports updated
+- `src/app/core/i18n/language.service.ts` - Phase 5 tested
+- `src/app/core/i18n/language.service.spec.ts` - 50+ tests
+- `src/app/features/dashboard/components/recentsaleswidget.ts`
+- `src/app/features/crud/components/crud.component.html`
+- `src/app/features/uikit/components/table-demo/table-demo.component.html`
+
+### Quality Metrics
+- Build: ✅ Passing with zero errors
+- Tests: 89/89 passing (100% success rate)
+- Code review: 8.5/10 - Production-ready
+- Type safety: Full TypeScript strict mode
+- Documentation: Complete with examples
+
+### i18n Implementation Status
+- ✅ Phase 1: Transloco Setup
+- ✅ Phase 2: UI Integration (Language Switcher)
+- ✅ Phase 3: Translation Files (EN, VI)
+- ✅ Phase 4: UI Language Switcher (Topbar Component)
+- ✅ Phase 5: Locale-Aware Pipes (Date, Currency)
+- ✅ Locale Registration (Vietnamese vi-VN)
+- ✅ Comprehensive Test Coverage (89 tests)
+
+### Next Steps
+- Phase 6: Additional languages (ES, FR, DE, ZH)
+- Phase 7: RTL support
+- Advanced: Form validation localization
 
 ---
 

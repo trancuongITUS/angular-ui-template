@@ -2,7 +2,9 @@ import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
 import { StyleClassModule } from 'primeng/styleclass';
+import { TranslocoModule } from '@jsverse/transloco';
 import { AppConfigurator } from './app.configurator';
+import { LanguageSwitcherComponent } from './language-switcher.component';
 import { LayoutService } from '../services/layout.service';
 import { LogoComponent } from '@shared/components';
 
@@ -10,7 +12,7 @@ import { LogoComponent } from '@shared/components';
     selector: 'app-topbar',
     standalone: true,
     changeDetection: ChangeDetectionStrategy.OnPush,
-    imports: [RouterModule, CommonModule, StyleClassModule, AppConfigurator, LogoComponent],
+    imports: [RouterModule, CommonModule, StyleClassModule, TranslocoModule, AppConfigurator, LanguageSwitcherComponent, LogoComponent],
     template: ` <div class="layout-topbar">
         <div class="layout-topbar-logo-container">
             <button class="layout-menu-button layout-topbar-action" (click)="layoutService.onMenuToggle()">
@@ -24,6 +26,10 @@ import { LogoComponent } from '@shared/components';
 
         <div class="layout-topbar-actions">
             <div class="layout-config-menu">
+                <!-- Language Switcher -->
+                <app-language-switcher />
+
+                <!-- Dark Mode Toggle -->
                 <button type="button" class="layout-topbar-action" (click)="toggleDarkMode()">
                     <i [ngClass]="{ 'pi ': true, 'pi-moon': layoutService.isDarkTheme(), 'pi-sun': !layoutService.isDarkTheme() }"></i>
                 </button>
@@ -51,15 +57,15 @@ import { LogoComponent } from '@shared/components';
                 <div class="layout-topbar-menu-content">
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-calendar"></i>
-                        <span>Calendar</span>
+                        <span>{{ 'topbar.calendar' | transloco }}</span>
                     </button>
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-inbox"></i>
-                        <span>Messages</span>
+                        <span>{{ 'topbar.messages' | transloco }}</span>
                     </button>
                     <button type="button" class="layout-topbar-action">
                         <i class="pi pi-user"></i>
-                        <span>Profile</span>
+                        <span>{{ 'topbar.profile' | transloco }}</span>
                     </button>
                 </div>
             </div>

@@ -1,11 +1,11 @@
 <p-toolbar styleClass="mb-6">
     <ng-template #start>
-        <p-button label="New" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
-        <p-button severity="secondary" label="Delete" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
+        <p-button [label]="'crud.new' | transloco" icon="pi pi-plus" severity="secondary" class="mr-2" (onClick)="openNew()" />
+        <p-button severity="secondary" [label]="'common.delete' | transloco" icon="pi pi-trash" outlined (onClick)="deleteSelectedProducts()" [disabled]="!selectedProducts || !selectedProducts.length" />
     </ng-template>
 
     <ng-template #end>
-        <p-button label="Export" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
+        <p-button [label]="'crud.export' | transloco" icon="pi pi-upload" severity="secondary" (onClick)="exportCSV()" />
     </ng-template>
 </p-toolbar>
 
@@ -28,10 +28,10 @@
 >
     <ng-template #caption>
         <div class="flex items-center justify-between">
-            <h5 class="m-0">Manage Products</h5>
+            <h5 class="m-0">{{ 'crud.manageProducts' | transloco }}</h5>
             <p-iconfield>
                 <p-inputicon styleClass="pi pi-search" />
-                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" placeholder="Search..." />
+                <input pInputText type="text" (input)="onGlobalFilter(dt, $event)" [placeholder]="'common.search' | transloco" />
             </p-iconfield>
         </div>
     </ng-template>
@@ -40,26 +40,26 @@
             <th style="width: 3rem">
                 <p-tableHeaderCheckbox />
             </th>
-            <th style="min-width: 16rem">Code</th>
+            <th style="min-width: 16rem">{{ 'crud.code' | transloco }}</th>
             <th pSortableColumn="name" style="min-width:16rem">
-                Name
+                {{ 'crud.name' | transloco }}
                 <p-sortIcon field="name" />
             </th>
-            <th>Image</th>
+            <th>{{ 'crud.image' | transloco }}</th>
             <th pSortableColumn="price" style="min-width: 8rem">
-                Price
+                {{ 'crud.price' | transloco }}
                 <p-sortIcon field="price" />
             </th>
             <th pSortableColumn="category" style="min-width:10rem">
-                Category
+                {{ 'crud.category' | transloco }}
                 <p-sortIcon field="category" />
             </th>
             <th pSortableColumn="rating" style="min-width: 12rem">
-                Reviews
+                {{ 'crud.reviews' | transloco }}
                 <p-sortIcon field="rating" />
             </th>
             <th pSortableColumn="inventoryStatus" style="min-width: 12rem">
-                Status
+                {{ 'crud.status' | transloco }}
                 <p-sortIcon field="inventoryStatus" />
             </th>
             <th style="min-width: 12rem"></th>
@@ -75,7 +75,7 @@
             <td>
                 <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.name" style="width: 64px" class="rounded" />
             </td>
-            <td>{{ product.price | currency: 'USD' }}</td>
+            <td>{{ product.price | localizedCurrency }}</td>
             <td>{{ product.category }}</td>
             <td>
                 <p-rating [(ngModel)]="product.rating" [readonly]="true" />
@@ -91,54 +91,54 @@
     </ng-template>
 </p-table>
 
-<p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" header="Product Details" [modal]="true" aria-labelledby="product-dialog-title">
+<p-dialog [(visible)]="productDialog" [style]="{ width: '450px' }" [header]="'crud.productDetails' | transloco" [modal]="true" aria-labelledby="product-dialog-title">
     <ng-template #content>
         <div class="flex flex-col gap-6">
             <img [src]="'https://primefaces.org/cdn/primeng/images/demo/product/' + product.image" [alt]="product.image" class="block m-auto pb-4" *ngIf="product.image" />
             <div>
-                <label for="name" class="block font-bold mb-3">Name</label>
+                <label for="name" class="block font-bold mb-3">{{ 'crud.name' | transloco }}</label>
                 <input type="text" pInputText id="name" [(ngModel)]="product.name" required autofocus fluid [attr.aria-describedby]="submitted && !product.name ? 'name-error' : null" />
-                <small id="name-error" class="text-red-500" *ngIf="submitted && !product.name">Name is required.</small>
+                <small id="name-error" class="text-red-500" *ngIf="submitted && !product.name">{{ 'crud.nameRequired' | transloco }}</small>
             </div>
             <div>
-                <label for="description" class="block font-bold mb-3">Description</label>
+                <label for="description" class="block font-bold mb-3">{{ 'crud.description' | transloco }}</label>
                 <textarea id="description" pTextarea [(ngModel)]="product.description" required rows="3" cols="20" fluid></textarea>
             </div>
 
             <div>
-                <label for="inventoryStatus" class="block font-bold mb-3">Inventory Status</label>
-                <p-select [(ngModel)]="product.inventoryStatus" inputId="inventoryStatus" [options]="statuses" optionLabel="label" optionValue="label" placeholder="Select a Status" fluid />
+                <label for="inventoryStatus" class="block font-bold mb-3">{{ 'crud.inventoryStatus' | transloco }}</label>
+                <p-select [(ngModel)]="product.inventoryStatus" inputId="inventoryStatus" [options]="statuses" optionLabel="label" optionValue="label" [placeholder]="'crud.selectStatus' | transloco" fluid />
             </div>
 
             <div>
-                <span class="block font-bold mb-4">Category</span>
+                <span class="block font-bold mb-4">{{ 'crud.category' | transloco }}</span>
                 <div class="grid grid-cols-12 gap-4">
                     <div class="flex items-center gap-2 col-span-6">
                         <p-radiobutton id="category1" name="category" value="Accessories" [(ngModel)]="product.category" />
-                        <label for="category1">Accessories</label>
+                        <label for="category1">{{ 'crud.accessories' | transloco }}</label>
                     </div>
                     <div class="flex items-center gap-2 col-span-6">
                         <p-radiobutton id="category2" name="category" value="Clothing" [(ngModel)]="product.category" />
-                        <label for="category2">Clothing</label>
+                        <label for="category2">{{ 'crud.clothing' | transloco }}</label>
                     </div>
                     <div class="flex items-center gap-2 col-span-6">
                         <p-radiobutton id="category3" name="category" value="Electronics" [(ngModel)]="product.category" />
-                        <label for="category3">Electronics</label>
+                        <label for="category3">{{ 'crud.electronics' | transloco }}</label>
                     </div>
                     <div class="flex items-center gap-2 col-span-6">
                         <p-radiobutton id="category4" name="category" value="Fitness" [(ngModel)]="product.category" />
-                        <label for="category4">Fitness</label>
+                        <label for="category4">{{ 'crud.fitness' | transloco }}</label>
                     </div>
                 </div>
             </div>
 
             <div class="grid grid-cols-12 gap-4">
                 <div class="col-span-6">
-                    <label for="price" class="block font-bold mb-3">Price</label>
+                    <label for="price" class="block font-bold mb-3">{{ 'crud.price' | transloco }}</label>
                     <p-inputnumber id="price" [(ngModel)]="product.price" mode="currency" currency="USD" locale="en-US" fluid />
                 </div>
                 <div class="col-span-6">
-                    <label for="quantity" class="block font-bold mb-3">Quantity</label>
+                    <label for="quantity" class="block font-bold mb-3">{{ 'crud.quantity' | transloco }}</label>
                     <p-inputnumber id="quantity" [(ngModel)]="product.quantity" fluid />
                 </div>
             </div>
@@ -146,8 +146,8 @@
     </ng-template>
 
     <ng-template #footer>
-        <p-button label="Cancel" icon="pi pi-times" text (click)="hideDialog()" />
-        <p-button label="Save" icon="pi pi-check" (click)="saveProduct()" />
+        <p-button [label]="'common.cancel' | transloco" icon="pi pi-times" text (click)="hideDialog()" />
+        <p-button [label]="'common.save' | transloco" icon="pi pi-check" (click)="saveProduct()" />
     </ng-template>
 </p-dialog>
 
