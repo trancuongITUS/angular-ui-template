@@ -54,7 +54,10 @@
       "Bash(ng build)",
       "Bash(git status:*)",
       "Skill(brainstorming)",
-      "Bash(npm audit:*)"
+      "Bash(npm audit:*)",
+      "Bash(npm view:*)",
+      "Bash(npm update:*)",
+      "Skill(git:cm)"
     ],
     "deny": [
       "Bash(rm ~/)",
