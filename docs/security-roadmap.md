@@ -17,9 +17,39 @@ Authentication security enhancement plan following OWASP guidelines.
 - [x] Memory leak fixes in layout components (takeUntil pattern)
 - [x] Documented client-side limitations and backend verification requirements
 
+### Token Storage Security Migration (v20.5.1)
+- [x] **Access Token**: Migrated from localStorage to memory (signal-based)
+  - Lost on page refresh (forces token refresh via AuthService)
+  - Inaccessible via DevTools Application tab
+  - Protected from XSS attacks requiring script execution
+- [x] **Refresh Token**: Migrated from localStorage to sessionStorage
+  - Cleared automatically on tab close
+  - Survives page refresh (enables session recovery)
+  - Still vulnerable to XSS but requires active script execution
+- [x] **Token Expiry**: Removed localStorage persistence, decoded from JWT payload
+  - Expiration check with 30-second buffer for graceful refresh
+  - Uses HS256 exp claim from JWT payload
+- [x] **Error Handling**: Comprehensive try-catch for sessionStorage operations
+  - Graceful degradation if storage unavailable
+  - Logged errors for debugging
+  - Clear token fallback on storage failure
+
+### Migration Impact
+- **Breaking Change**: Users must re-login after deployment
+  - Old localStorage tokens automatically ignored
+  - AuthService handles token refresh on first protected request
+- **Session Isolation**: No cross-tab token sharing by default
+  - Each tab maintains independent session via sessionStorage
+  - Improves security by limiting token exposure scope
+- **Page Refresh**: Requires token refresh implementation (Phase 4)
+  - Access token lost on refresh
+  - SessionService retrieves refresh token from sessionStorage
+  - AuthService exchanges for new access token
+
 ### Known Risks
-- **XSS Attack Surface**: localStorage tokens accessible to injected scripts
-- **Mitigation**: CSP headers prevent unauthorized script execution
+- **XSS Attack Surface**: sessionStorage tokens accessible to injected scripts
+- **Mitigation**: CSP headers + signal-based access tokens
+- **Session Loss**: Clearing sessionStorage clears refresh token (expected behavior)
 
 ## Phase 2 (Next Sprint)
 
