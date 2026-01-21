@@ -11,7 +11,7 @@ export interface User {
     roles: UserRole[];
     permissions?: string[];
     isActive: boolean;
-    emailVerified: boolean;
+    isEmailVerified: boolean;
     lastLoginAt?: Date;
     createdAt: Date;
     updatedAt: Date;
@@ -24,6 +24,7 @@ export enum UserRole {
     ADMIN = 'ADMIN',
     MANAGER = 'MANAGER',
     EMPLOYEE = 'EMPLOYEE',
+    USER = 'USER',
     HR = 'HR',
     GUEST = 'GUEST'
 }

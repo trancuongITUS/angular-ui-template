@@ -5,21 +5,24 @@ import { LoggerService } from '@core/services';
 /**
  * Service for managing user session state.
  * Uses Angular Signals for reactive state management.
+ * User data is stored in memory only (signals) - NOT persisted to storage.
+ * Session restoration happens via AuthService.initializeAuth() using refresh token.
  */
 @Injectable({
     providedIn: 'root'
 })
 export class SessionService {
     private readonly logger = inject(LoggerService);
-    private readonly USER_SESSION_KEY = 'user_session';
 
-    // Signals for reactive state management
+    // Signals for reactive state management (memory-only)
     private readonly userSignal = signal<User | null>(null);
     private readonly isAuthenticatedSignal = signal<boolean>(false);
+    private readonly isInitializingSignal = signal<boolean>(false);
 
     // Public computed signals
     readonly user = this.userSignal.asReadonly();
     readonly isAuthenticated = this.isAuthenticatedSignal.asReadonly();
+    readonly isInitializing = this.isInitializingSignal.asReadonly();
 
     // Derived computed properties
     readonly userProfile = computed<UserProfile | null>(() => {
@@ -54,22 +57,13 @@ export class SessionService {
         return user?.email ?? null;
     });
 
-    constructor() {
-        this.loadSessionFromStorage();
-    }
-
     /**
      * Sets the current user and updates authentication state.
+     * User data is stored in memory only (signal) - NOT persisted.
      */
     setUser(user: User | null): void {
         this.userSignal.set(user);
         this.isAuthenticatedSignal.set(!!user);
-
-        if (user) {
-            this.saveSessionToStorage(user);
-        } else {
-            this.clearSessionFromStorage();
-        }
     }
 
     /**
@@ -112,12 +106,18 @@ export class SessionService {
     }
 
     /**
-     * Clears the current session.
+     * Clears the current session from memory.
      */
     clearSession(): void {
         this.userSignal.set(null);
         this.isAuthenticatedSignal.set(false);
-        this.clearSessionFromStorage();
+    }
+
+    /**
+     * Sets initialization state (used during session restore).
+     */
+    setInitializing(initializing: boolean): void {
+        this.isInitializingSignal.set(initializing);
     }
 
     /**
@@ -131,59 +131,5 @@ export class SessionService {
 
         const updatedUser = { ...currentUser, ...updates };
         this.setUser(updatedUser);
-    }
-
-    /**
-     * Saves the user session to localStorage.
-     */
-    private saveSessionToStorage(user: User): void {
-        try {
-            localStorage.setItem(this.USER_SESSION_KEY, JSON.stringify(user));
-        } catch (error) {
-            this.logger.error('Session save failed', error);
-        }
-    }
-
-    /**
-     * Loads the user session from localStorage.
-     */
-    private loadSessionFromStorage(): void {
-        try {
-            const sessionData = localStorage.getItem(this.USER_SESSION_KEY);
-            if (sessionData) {
-                const user = JSON.parse(sessionData) as User;
-
-                // Convert date strings back to Date objects
-                if (user.lastLoginAt) {
-                    user.lastLoginAt = new Date(user.lastLoginAt);
-                }
-                user.createdAt = new Date(user.createdAt);
-                user.updatedAt = new Date(user.updatedAt);
-
-                this.userSignal.set(user);
-                this.isAuthenticatedSignal.set(true);
-            }
-        } catch (error) {
-            this.logger.error('Session load failed', error);
-            this.clearSessionFromStorage();
-        }
-    }
-
-    /**
-     * Clears the user session from localStorage.
-     */
-    private clearSessionFromStorage(): void {
-        try {
-            localStorage.removeItem(this.USER_SESSION_KEY);
-        } catch (error) {
-            this.logger.error('Session clear failed', error);
-        }
-    }
-
-    /**
-     * Checks if the session exists in storage.
-     */
-    hasStoredSession(): boolean {
-        return !!localStorage.getItem(this.USER_SESSION_KEY);
     }
 }

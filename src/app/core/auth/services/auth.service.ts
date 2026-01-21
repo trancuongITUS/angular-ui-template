@@ -1,16 +1,18 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
-import { Observable, BehaviorSubject, throwError, of, timer, Subject } from 'rxjs';
+import { Observable, Subject, throwError, of } from 'rxjs';
 import { map, tap, catchError, switchMap, shareReplay, first, filter, take } from 'rxjs/operators';
 import { TokenService } from './token.service';
 import { SessionService } from './session.service';
-import { LoginCredentials, AuthResponse, RefreshTokenRequest, RefreshTokenResponse, PasswordResetRequest, PasswordResetConfirmation, RegistrationData } from '../models/auth.model';
+import { AuthBroadcastService } from './auth-broadcast.service';
+import { LoginCredentials, AuthResponse, RefreshTokenResponse, PasswordResetRequest, PasswordResetConfirmation, RegistrationData } from '../models/auth.model';
 import { User } from '../models/user.model';
 
 /**
  * Authentication service that handles login, logout, token refresh, and user authentication state.
  * Uses modern Angular patterns with signals and functional dependency injection.
+ * Integrates with AuthBroadcastService for cross-tab synchronization.
  */
 @Injectable({
     providedIn: 'root'
@@ -20,16 +22,19 @@ export class AuthService {
     private readonly router = inject(Router);
     private readonly tokenService = inject(TokenService);
     private readonly sessionService = inject(SessionService);
+    private readonly authBroadcast = inject(AuthBroadcastService);
 
     // Authentication endpoints
     private readonly AUTH_ENDPOINTS = {
         LOGIN: '/auth/login',
         LOGOUT: '/auth/logout',
+        LOGOUT_ALL: '/auth/logout-all',
         REFRESH: '/auth/refresh',
-        ME: '/auth/me',
+        PROFILE: '/auth/profile',
         REGISTER: '/auth/register',
         PASSWORD_RESET: '/auth/password-reset',
-        PASSWORD_RESET_CONFIRM: '/auth/password-reset-confirm'
+        PASSWORD_RESET_CONFIRM: '/auth/password-reset-confirm',
+        CHANGE_PASSWORD: '/auth/change-password'
     };
 
     // Loading state - using Signals for Angular 20 best practices
@@ -42,6 +47,7 @@ export class AuthService {
 
     // Authentication state (delegated to SessionService)
     readonly isAuthenticated = this.sessionService.isAuthenticated;
+    readonly isInitializing = this.sessionService.isInitializing;
     readonly currentUser = this.sessionService.user;
     readonly userProfile = this.sessionService.userProfile;
 
@@ -50,26 +56,67 @@ export class AuthService {
     private refreshTokenSubject = new Subject<string | null>();
 
     constructor() {
+        this.setupBroadcastListeners();
         this.initializeAuth();
     }
 
     /**
-     * Initializes authentication by checking for stored tokens and validating session.
-     * Uses first() operator to auto-complete after single emission, preventing memory leaks.
+     * Sets up listeners for auth events from other tabs.
+     */
+    private setupBroadcastListeners(): void {
+        // When another tab logs out, clear local state
+        this.authBroadcast.onLogout(() => {
+            this.clearAuthState();
+            this.router.navigate(['/auth/login']);
+        });
+
+        // When another tab logs in, attempt to restore session
+        this.authBroadcast.onLogin(() => {
+            if (!this.sessionService.isAuthenticated()) {
+                this.restoreSession();
+            }
+        });
+    }
+
+    /**
+     * Initializes authentication by checking for refresh token and restoring session.
+     * With memory-based storage, we always need to restore session on page load.
      */
     private initializeAuth(): void {
-        if (this.tokenService.isTokenValid() && this.sessionService.hasStoredSession()) {
-            // Token and session exist, verify with server
-            // first() auto-completes subscription after first emission
-            this.verifySession()
-                .pipe(first())
-                .subscribe({
-                    error: () => this.handleAuthError()
-                });
-        } else {
-            // Clear invalid session
-            this.clearAuthState();
+        const hasRefreshToken = this.tokenService.hasRefreshToken();
+
+        if (hasRefreshToken) {
+            this.sessionService.setInitializing(true);
+            this.restoreSession();
         }
+    }
+
+    /**
+     * Restores session by refreshing the access token and fetching user profile.
+     */
+    private restoreSession(): void {
+        this.refreshToken()
+            .pipe(
+                switchMap(() => this.fetchProfile()),
+                first()
+            )
+            .subscribe({
+                next: (user) => {
+                    this.sessionService.setUser(user);
+                    this.sessionService.setInitializing(false);
+                },
+                error: () => {
+                    this.clearAuthState();
+                    this.sessionService.setInitializing(false);
+                }
+            });
+    }
+
+    /**
+     * Fetches user profile from the server.
+     */
+    fetchProfile(): Observable<User> {
+        return this.http.get<{ data: User }>(this.AUTH_ENDPOINTS.PROFILE).pipe(map((response) => response.data));
     }
 
     /**
@@ -79,8 +126,12 @@ export class AuthService {
         this.setLoading(true);
         this.clearError();
 
-        return this.http.post<AuthResponse>(this.AUTH_ENDPOINTS.LOGIN, credentials).pipe(
-            tap((response) => this.handleAuthSuccess(response)),
+        return this.http.post<{ data: AuthResponse }>(this.AUTH_ENDPOINTS.LOGIN, credentials).pipe(
+            map((response) => response.data),
+            tap((response) => {
+                this.handleAuthSuccess(response);
+                this.authBroadcast.broadcastLogin();
+            }),
             catchError((error) => this.handleError('Login failed', error)),
             tap(() => this.setLoading(false))
         );
@@ -93,8 +144,12 @@ export class AuthService {
         this.setLoading(true);
         this.clearError();
 
-        return this.http.post<AuthResponse>(this.AUTH_ENDPOINTS.REGISTER, data).pipe(
-            tap((response) => this.handleAuthSuccess(response)),
+        return this.http.post<{ data: AuthResponse }>(this.AUTH_ENDPOINTS.REGISTER, data).pipe(
+            map((response) => response.data),
+            tap((response) => {
+                this.handleAuthSuccess(response);
+                this.authBroadcast.broadcastLogin();
+            }),
             catchError((error) => this.handleError('Registration failed', error)),
             tap(() => this.setLoading(false))
         );
@@ -105,11 +160,32 @@ export class AuthService {
      */
     logout(): Observable<void> {
         this.setLoading(true);
+        const refreshToken = this.tokenService.getRefreshToken();
 
-        // Call logout endpoint (optional, depends on backend)
-        return this.http.post<void>(this.AUTH_ENDPOINTS.LOGOUT, {}).pipe(
+        // Backend expects refresh token in body for session revocation
+        const body = refreshToken ? { refreshToken } : {};
+
+        return this.http.post<void>(this.AUTH_ENDPOINTS.LOGOUT, body).pipe(
             catchError(() => of(void 0)), // Ignore errors on logout
             tap(() => {
+                this.authBroadcast.broadcastLogout();
+                this.clearAuthState();
+                this.router.navigate(['/auth/login']);
+            }),
+            tap(() => this.setLoading(false))
+        );
+    }
+
+    /**
+     * Logs out from all devices.
+     */
+    logoutAll(): Observable<void> {
+        this.setLoading(true);
+
+        return this.http.post<void>(this.AUTH_ENDPOINTS.LOGOUT_ALL, {}).pipe(
+            catchError(() => of(void 0)),
+            tap(() => {
+                this.authBroadcast.broadcastLogout();
                 this.clearAuthState();
                 this.router.navigate(['/auth/login']);
             }),
@@ -144,37 +220,23 @@ export class AuthService {
 
         this.refreshTokenInProgress = true;
 
-        const request: RefreshTokenRequest = { refreshToken };
-
-        return this.http.post<RefreshTokenResponse>(this.AUTH_ENDPOINTS.REFRESH, request).pipe(
-            tap((response) => {
-                this.tokenService.setAccessToken(response.accessToken);
-                this.tokenService.setRefreshToken(response.refreshToken);
-                this.refreshTokenSubject.next(response.accessToken);
+        return this.http.post<{ data: RefreshTokenResponse }>(this.AUTH_ENDPOINTS.REFRESH, { refreshToken }).pipe(
+            map((response) => response.data),
+            tap((data) => {
+                this.tokenService.setAccessToken(data.accessToken);
+                this.tokenService.setRefreshToken(data.refreshToken);
+                this.refreshTokenSubject.next(data.accessToken);
             }),
-            map((response) => response.accessToken),
+            map((data) => data.accessToken),
             catchError((error) => {
                 this.refreshTokenSubject.next(null);
-                this.handleAuthError();
+                this.clearAuthState();
                 return throwError(() => error);
             }),
             tap(() => {
                 this.refreshTokenInProgress = false;
             }),
             shareReplay(1)
-        );
-    }
-
-    /**
-     * Verifies the current session by fetching user data from the server.
-     */
-    verifySession(): Observable<User> {
-        return this.http.get<User>(this.AUTH_ENDPOINTS.ME).pipe(
-            tap((user) => this.sessionService.setUser(user)),
-            catchError((error) => {
-                this.handleAuthError();
-                return throwError(() => error);
-            })
         );
     }
 
@@ -240,16 +302,6 @@ export class AuthService {
         this.tokenService.setRefreshToken(response.refreshToken);
         this.sessionService.setUser(response.user);
         this.clearError();
-    }
-
-    /**
-     * Handles authentication errors by clearing state and redirecting to login.
-     */
-    private handleAuthError(): void {
-        this.clearAuthState();
-        this.router.navigate(['/auth/login'], {
-            queryParams: { returnUrl: this.router.url }
-        });
     }
 
     /**

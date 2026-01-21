@@ -89,6 +89,13 @@ export class TokenService {
     }
 
     /**
+     * Checks if refresh token exists in sessionStorage.
+     */
+    hasRefreshToken(): boolean {
+        return !!this.getRefreshToken();
+    }
+
+    /**
      * Checks if the access token is expired.
      */
     isTokenExpired(): boolean {
