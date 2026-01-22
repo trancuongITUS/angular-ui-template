@@ -6,7 +6,7 @@ import { Environment } from './environment.interface';
 
 export const environment: Environment = {
     production: false,
-    apiUrl: 'http://localhost:3000/api',
+    apiUrl: 'http://localhost:3000/api/v1',
     appName: 'HRM Frontend',
     version: '1.0.0',
     enableDebugTools: true,

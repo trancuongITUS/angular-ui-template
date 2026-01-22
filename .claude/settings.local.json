@@ -57,7 +57,9 @@
       "Bash(npm audit:*)",
       "Bash(npm view:*)",
       "Bash(npm update:*)",
-      "Skill(git:cm)"
+      "Skill(git:cm)",
+      "Bash(git check-ignore:*)",
+      "Bash(python.exe:*)"
     ],
     "deny": [
       "Bash(rm ~/)",
