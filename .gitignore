@@ -46,5 +46,12 @@ angular-ui-template.code-workspace
 nul
 
 # ck
+/.claude
+/.cursor
+/.opencode
 /plans
+.repomixignore
 repomix-output.xml
+AGENTS.md
+CLAUDE.md
+release-manifest.json
