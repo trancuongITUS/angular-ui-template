@@ -11,7 +11,9 @@
         "build:prod": "ng build --configuration production",
         "watch": "ng build --watch --configuration development",
         "format": "prettier --write \"**/*.{js,mjs,ts,mts,d.ts,html}\" --cache",
-        "test": "ng test"
+        "test": "ng test",
+        "e2e": "npx playwright test --config=e2e/playwright.config.ts",
+        "e2e:ui": "npx playwright test --config=e2e/playwright.config.ts --ui"
     },
     "private": true,
     "dependencies": {
@@ -41,6 +43,7 @@
         "@angular-devkit/build-angular": "^20.3.14",
         "@angular/cli": "^20.3.14",
         "@angular/compiler-cli": "^20.3.16",
+        "@playwright/test": "^1.58.0",
         "@types/jasmine": "~5.1.0",
         "autoprefixer": "^10.4.20",
         "eslint": "^9.30.1",
