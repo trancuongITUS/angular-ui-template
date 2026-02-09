@@ -1,84 +1,98 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { JwtPayload } from '../models/auth.model';
 import { LoggerService } from '@core/services';
 
 /**
- * Service for managing JWT tokens in localStorage.
- * Handles storage, retrieval, and validation of access and refresh tokens.
+ * Service for managing JWT tokens with secure storage strategy.
+ * - Access token: stored in memory (signal) - lost on page refresh, protected from XSS
+ * - Refresh token: stored in sessionStorage - cleared on tab close, survives refresh
  *
- * ⚠️ SECURITY WARNING: localStorage is vulnerable to XSS attacks.
- * Tokens stored here can be accessed by any injected script.
+ * Security improvements over localStorage:
+ * - Access tokens not accessible via DevTools Application tab
+ * - Session isolation per tab (no cross-tab token sharing by default)
+ * - Automatic cleanup on tab close
  *
- * PRODUCTION RECOMMENDATIONS:
- * - Use httpOnly cookies with SameSite=Strict
- * - Implement Content Security Policy (CSP) headers
- * - Consider token encryption before storage
- * - Implement token rotation strategy
- *
- * @see https://owasp.org/www-project-web-security-testing-guide/
- * @see docs/security-roadmap.md for migration plan
+ * @see docs/security-roadmap.md for full security documentation
  */
 @Injectable({
     providedIn: 'root'
 })
 export class TokenService {
     private readonly logger = inject(LoggerService);
-    private readonly ACCESS_TOKEN_KEY = 'access_token';
+
+    /** Storage key for refresh token in sessionStorage */
     private readonly REFRESH_TOKEN_KEY = 'refresh_token';
-    private readonly TOKEN_EXPIRY_KEY = 'token_expiry';
+
+    /** Access token stored in memory via signal - NOT persisted, protected from XSS */
+    private readonly accessTokenSignal = signal<string | null>(null);
 
     /**
-     * Stores the access token in localStorage.
+     * Stores access token in memory (signal).
+     * Token will be lost on page refresh - use refresh token to restore.
      */
     setAccessToken(token: string): void {
         if (token) {
-            localStorage.setItem(this.ACCESS_TOKEN_KEY, token);
+            this.accessTokenSignal.set(token);
+        }
+    }
 
-            // Calculate and store expiry time
-            const payload = this.decodeToken(token);
-            if (payload?.exp) {
-                localStorage.setItem(this.TOKEN_EXPIRY_KEY, payload.exp.toString());
+    /**
+     * Retrieves access token from memory.
+     */
+    getAccessToken(): string | null {
+        return this.accessTokenSignal();
+    }
+
+    /**
+     * Stores refresh token in sessionStorage.
+     * Cleared when tab closes, survives page refresh.
+     */
+    setRefreshToken(token: string): void {
+        if (token) {
+            try {
+                sessionStorage.setItem(this.REFRESH_TOKEN_KEY, token);
+            } catch (error) {
+                this.logger.error('Refresh token storage failed', error);
             }
         }
     }
 
     /**
-     * Retrieves the access token from localStorage.
+     * Retrieves refresh token from sessionStorage.
      */
-    getAccessToken(): string | null {
-        return localStorage.getItem(this.ACCESS_TOKEN_KEY);
-    }
-
-    /**
-     * Stores the refresh token in localStorage.
-     */
-    setRefreshToken(token: string): void {
-        if (token) {
-            localStorage.setItem(this.REFRESH_TOKEN_KEY, token);
+    getRefreshToken(): string | null {
+        try {
+            return sessionStorage.getItem(this.REFRESH_TOKEN_KEY);
+        } catch (error) {
+            this.logger.error('Refresh token retrieval failed', error);
+            return null;
         }
     }
 
     /**
-     * Retrieves the refresh token from localStorage.
-     */
-    getRefreshToken(): string | null {
-        return localStorage.getItem(this.REFRESH_TOKEN_KEY);
-    }
-
-    /**
-     * Removes all tokens from localStorage.
+     * Clears all tokens (memory signal + sessionStorage).
      */
     clearTokens(): void {
-        localStorage.removeItem(this.ACCESS_TOKEN_KEY);
-        localStorage.removeItem(this.REFRESH_TOKEN_KEY);
-        localStorage.removeItem(this.TOKEN_EXPIRY_KEY);
+        this.accessTokenSignal.set(null);
+        try {
+            sessionStorage.removeItem(this.REFRESH_TOKEN_KEY);
+        } catch (error) {
+            this.logger.error('Token clear failed', error);
+        }
     }
 
     /**
-     * Checks if the access token exists.
+     * Checks if access token exists in memory.
      */
     hasToken(): boolean {
-        return !!this.getAccessToken();
+        return !!this.accessTokenSignal();
+    }
+
+    /**
+     * Checks if refresh token exists in sessionStorage.
+     */
+    hasRefreshToken(): boolean {
+        return !!this.getRefreshToken();
     }
 
     /**

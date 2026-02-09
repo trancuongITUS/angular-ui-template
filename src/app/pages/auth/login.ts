@@ -104,7 +104,8 @@ export class LoginComponent {
             .login({
                 email: this.email,
                 password: this.password,
-                rememberMe: this.rememberMe
+                // TODO: Uncomment when function is ready
+                // rememberMe: this.rememberMe
             })
             .subscribe({
                 next: () => {

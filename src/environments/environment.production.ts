@@ -6,8 +6,8 @@ import { Environment } from './environment.interface';
 
 export const environment: Environment = {
     production: true,
-    apiUrl: 'https://api.yourcompany.com/api',
-    appName: 'HRM Frontend',
+    apiUrl: 'https://api.yourcompany.com/api/v1',
+    appName: 'HRM Frontend (Prod)',
     version: '1.0.0',
     enableDebugTools: false,
     logLevel: 'error',

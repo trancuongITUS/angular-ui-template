@@ -52,7 +52,11 @@
 CoreModule
 ├── Auth Subsystem
 │   ├── authGuard - Route protection
-│   ├── authInterceptor - JWT token injection
+│   ├── authInterceptor - JWT token injection & refresh
+│   ├── TokenService - Secure token storage
+│   │   ├── Access Token: signal (memory only, lost on refresh)
+│   │   ├── Refresh Token: sessionStorage (survives refresh, cleared on tab close)
+│   │   └── Methods: get/set tokens, expiry checks, JWT decode
 │   ├── SessionService - Session management
 │   ├── AuthService - Auth operations
 │   └── Models
@@ -443,12 +447,16 @@ Component initiates API request
         ▼
 AuthInterceptor runs
         │
-        ├─ Check SessionService for token
-        ├─ If token exists:
+        ├─ Check TokenService for access token (memory signal)
+        ├─ If token exists and valid:
         │  └─ Add: Authorization: Bearer {token}
         │
         └─ If token missing/expired:
-           └─ Trigger re-authentication
+           ├─ Retrieve refresh token from sessionStorage
+           ├─ POST /api/auth/refresh
+           ├─ Store new access token (signal)
+           ├─ Store new refresh token (sessionStorage)
+           └─ Retry original request with new token
 
         │
         ▼
@@ -464,7 +472,7 @@ Backend validates token
             ErrorInterceptor catches 401
             │
             ▼
-            Redirect to /auth/login
+            Clear tokens & Redirect to /auth/login
 ```
 
 ## Error Handling Strategy
@@ -643,19 +651,29 @@ Alternative: Signals (auto-cleanup)
 
 ```
 Browser Layer
-├─ HttpOnly cookies (if using)
+├─ Memory-only access tokens (signal)
+├─ SessionStorage refresh tokens (tab-isolated)
 ├─ XSS prevention (Angular DomSanitizer)
+├─ CSP headers (block inline scripts)
 └─ CSRF tokens (XSRF-TOKEN)
+
+Token Storage Strategy
+├─ Access Token: signal (lost on refresh, protected from XSS)
+├─ Refresh Token: sessionStorage (cleared on tab close, survives refresh)
+├─ Expiry Decoding: JWT payload (exp claim + 30s buffer)
+└─ Session Isolation: Per-tab via sessionStorage
 
 HTTP Layer
 ├─ CORS validation
-├─ JWT validation
+├─ JWT validation (signature & expiry)
+├─ Token refresh via refresh token
 ├─ Rate limiting
 └─ Input validation
 
 Application Layer
 ├─ authGuard (route protection)
 ├─ Role-based access control
+├─ TokenService error handling
 ├─ Data sanitization
 └─ Error message sanitization
 
